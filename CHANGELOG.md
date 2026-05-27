@@ -2,6 +2,12 @@
 
 All notable changes to this collection are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+
+- README install section rewritten with vendor-native install commands per agent: `droid plugin marketplace add` + `droid plugin install` for Factory Droid, `codex plugin marketplace add` + `codex plugin add` (or `/plugins` TUI on Codex 0.125 and earlier) for Codex CLI, and the existing two-line `/plugin marketplace add` flow for Claude Code. Cursor and other agents without a CLI installer are routed to the cross-vendor `npx skills add` from [vercel-labs/skills](https://github.com/vercel-labs/skills). The manual symlink loop is now a fallback at the end of the section instead of the headline path.
+
 ## [0.1.0] — 2026-05-26
 
 ### Added
