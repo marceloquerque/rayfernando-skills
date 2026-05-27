@@ -1,0 +1,100 @@
+{
+  "$comment": "Example docs/qa/qa-config.json. The scaffolder writes a minimal stub (issueTracker.type=none). The discovery ceremony in references/issue-trackers.md rewrites this file once the user confirms which tracker to use. Unknown fields are ignored — this schema is forward-compatible.",
+
+  "version": 1,
+  "discoveredAt": "2026-05-27T18:23:00Z",
+  "confirmedBy": "user",
+
+  "issueTracker": {
+    "$comment": "type=linear|github|jira|notion|none. Discovery ceremony fills this; never inferred silently.",
+    "type": "linear",
+
+    "$comment_syncOnFile": "When true, auto pass syncs every newly-filed bug immediately. When false (default), sync happens at BRB time after a human has triaged.",
+    "syncOnFile": false,
+
+    "$comment_pull": "Bi-directional sync — tracker → markdown. See references/issue-trackers.md.",
+    "pull": {
+      "onBRBStart": true,
+      "onReTest": true,
+      "window": "since-last-sync",
+      "$comment_createLocalForUntracked": "ask|ignore|create — what to do when a tracker bug has no local markdown counterpart. Default ask.",
+      "createLocalForUntracked": "ask"
+    },
+
+    "linear": {
+      "teamId": "ABC-12345",
+      "labelMap": {
+        "P0": "urgent",
+        "P1": "high",
+        "P2": "low"
+      },
+      "extraLabels": ["qa", "brb"],
+      "mcpServer": "linear"
+    },
+
+    "$comment_github": "Active only if type=github. Both blocks can co-exist in a mixed-tracker config.",
+    "github": {
+      "repo": "owner/name",
+      "labelPrefix": "",
+      "labelMap": {
+        "P0": "P0",
+        "P1": "P1",
+        "P2": "P2"
+      },
+      "extraLabels": ["qa", "brb"]
+    },
+
+    "jira": {
+      "baseUrl": "https://acme.atlassian.net",
+      "projectKey": "QA",
+      "labelMap": {
+        "P0": "Highest",
+        "P1": "High",
+        "P2": "Low"
+      }
+    },
+
+    "notion": {
+      "databaseId": "abcd1234567890efghijklmnop",
+      "mcpServer": "notion"
+    }
+  },
+
+  "$comment_triage": "Pattern-based suggestions inside the BRB. See references/triage-heuristics.md.",
+  "triage": {
+    "runHeuristicsOnBRBStart": true,
+    "runHeuristicsOnFile": false,
+    "enabledHeuristics": [
+      "same-suspect-file",
+      "steps-prefix-overlap",
+      "same-persona-surface-outcome",
+      "same-console-error",
+      "same-test-id",
+      "phase-cascade",
+      "cosmetic-cluster",
+      "regression-marker",
+      "same-owner"
+    ]
+  },
+
+  "$comment_report": "HTML report config. See references/html-report-style-guide.md.",
+  "report": {
+    "outputDir": "docs/qa/report",
+    "title": "QA Report"
+  },
+
+  "$comment_platforms": "Surfaces the agent tests against. See references/browser-playbook.md and references/ios-simulator-playbook.md.",
+  "platforms": {
+    "web": {
+      "primaryViewport": "375x812",
+      "desktopViewport": "1440x900"
+    },
+    "ios": {
+      "enabled": false,
+      "devices": ["iPhone 17 Pro", "iPad Pro 13-inch"],
+      "url": "http://localhost:3000",
+      "$comment_preferred": "AXe|baguette|XcodeBuildMCP|ios-build-verify|idb — companion skill / CLI the agent reaches for first when input is required.",
+      "preferred": "AXe"
+    }
+  }
+}
