@@ -8,6 +8,22 @@ Ray Fernando's collection of installable Skill files for AI coding agents.
 
 ---
 
+## What's new in v0.3
+
+- **HTML report redesigned around editorial typography.** Inspired by Zite and Dieter Rams. Magazine layout, 640px reading column, ink-on-paper palette, hairline rules. **No coloured chips, no pills, no shadows.** Priority is the word `P0` in small caps in the eyebrow; status is the word `Open`; verdict is a single display-type word (`YES` or `NO`). One ink colour for body, one quiet terracotta accent for links and CTAs. On desktop, bug detail pages gain a quiet right rail for metadata; on mobile, a sticky `thumb-zone` shelf keeps the primary action in reach without scrolling back up. Light + dark + print stylesheets.
+- **Engineer-reviewer information hierarchy.** Each bug detail page reads in the order the eye sweeps: Eyebrow (priority · phase · status · tracker) → Title → Deck → **Impact** (a serif pull-quote — what does a user experience if this ships?) → What's happening / What should happen → **Risk to fix** (a quiet engineer's marginal note, hidden when empty) → Steps → Evidence → Triage log.
+- **Two new bug template fields:** `## Impact` (filled at file time) and `## Risk to fix` (usually empty at file time; engineer populates during BRB). Both additive — v0.2 bugs render gracefully without them.
+- **Design samples in the repo** under [`samples/`](plugins/running-bug-review-board/skills/running-bug-review-board/references/templates/html-report/samples) (dashboard desktop, dashboard mobile, bug-detail desktop) so contributors and reviewers can see the design language at a glance.
+
+## What's new in v0.2
+
+- **Apple-language HTML dashboard.** Every pass and BRB regenerates `docs/qa/report/index.html`. *(Restyled in v0.3 — see above.)*
+- **Issue-tracker integration — discovered and confirmed.** Linear (via Linear MCP), GitHub Issues (via `gh`), Jira, or Notion. The skill probes signals and asks the user before writing `docs/qa/qa-config.json`. Never assumed silently.
+- **Bi-directional sync.** Engineering's status changes flow back from the tracker into local markdown at BRB start and during re-tests.
+- **Interactive BRB (separate session).** A facilitator-agent workflow with pre-BRB tracker pull, pattern-based triage heuristics, per-bug walk, HTML refresh, minutes. Kept separate from the auto pass on purpose.
+- **iOS / iPadOS app testing — curated cite hub.** When the repo is an iOS app project, the skill defers actual simulator driving to the iOS community's purpose-built skills ([Cameron Cooke's AXe](https://github.com/cameroncooke/AXe), [XcodeBuildMCP](https://github.com/getsentry/XcodeBuildMCP); [Rudrank Riyam's ASC CLI + skills](https://github.com/rudrankriyam/App-Store-Connect-CLI); [Conor Luddy's ios-simulator-skill](https://github.com/conorluddy/ios-simulator-skill); [Josh Adams's ios-build-verify](https://github.com/vermont42/ios-build-verify); [tddworks' baguette](https://github.com/tddworks/baguette); and others).
+- **Extension story.** Forward-compatible `qa-config.json` schema. See [`extending-the-skill.md`](plugins/running-bug-review-board/skills/running-bug-review-board/references/extending-the-skill.md).
+
 ## Skill files in this collection
 
 | Skill file | What it does |
@@ -176,7 +192,7 @@ rayfernando-skills/
 │       │   └── plugin.json           # plugin manifest
 │       └── skills/
 │           └── running-bug-review-board/
-│               ├── SKILL.md          # main entry (~450 lines)
+│               ├── SKILL.md          # main entry (~265 lines)
 │               ├── references/       # loaded on demand
 │               │   ├── workflow.md
 │               │   ├── discovering-the-app.md
@@ -184,29 +200,13 @@ rayfernando-skills/
 │               │   ├── test-accounts.md
 │               │   ├── session-hygiene.md
 │               │   ├── browser-playbook.md
-│               │   ├── ios-simulator-playbook.md      # NEW v0.2
 │               │   ├── parallel-coordinator.md
 │               │   ├── sequential-wrapup.md
 │               │   ├── bug-filing.md
 │               │   ├── gate-merge.md
-│               │   ├── issue-trackers.md              # NEW v0.2
-│               │   ├── brb-interactive.md             # NEW v0.2
-│               │   ├── triage-heuristics.md           # NEW v0.2
-│               │   ├── html-report-style-guide.md     # NEW v0.2
-│               │   ├── extending-the-skill.md         # NEW v0.2
 │               │   └── templates/    # bug, test-plan, run-report, merge skeletons
-│               │       ├── brb-interactive-prompt.md  # NEW v0.2
-│               │       ├── brb-minutes.md             # NEW v0.2
-│               │       ├── qa-config.example.json     # NEW v0.2
-│               │       └── html-report/               # NEW v0.2
-│               │           ├── assets.css
-│               │           ├── index.html
-│               │           ├── bug.html
-│               │           └── run.html
 │               └── scripts/
-│                   ├── scaffold-qa.sh                 # extended in v0.2
-│                   ├── bugs-needing-sync.sh           # NEW v0.2
-│                   └── bugs-needing-pull.sh           # NEW v0.2
+│                   └── scaffold-qa.sh   # universal QA folder scaffold
 ├── .github/workflows/release.yml     # builds claude.ai zip on tag push
 ├── CHANGELOG.md
 ├── LICENSE
