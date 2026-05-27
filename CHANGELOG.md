@@ -4,6 +4,160 @@ All notable changes to this collection are documented here. The format follows [
 
 ## [Unreleased]
 
+## [0.2.0] — 2026-05-27
+
+### Added
+
+- **Apple-language HTML report.** The QA agent now writes
+  `docs/qa/report/index.html` + per-bug and per-run detail pages by
+  applying `references/html-report-style-guide.md`. SF Pro typography
+  stack, Apple system color palette with default light and dark
+  variants, Dynamic Type-style scale (Large Title 34 → Caption 11),
+  8-point spacing grid, evidence galleries with embedded screenshots,
+  vanilla-JS filter bar, print stylesheet. Canonical CSS + page
+  skeletons in `references/templates/html-report/`. Markdown remains
+  the source of truth; HTML is regenerated.
+- **Issue-tracker integration via `docs/qa/qa-config.json`.** First-
+  class adapters for Linear (Linear MCP at `https://mcp.linear.app/mcp`)
+  and GitHub Issues (`gh`); templated adapters for Jira (REST or
+  `jira-cli`) and Notion (Notion MCP). The skill leads with a
+  **discovery ceremony** — enumerates signals (`LINEAR_API_KEY`,
+  `gh auth status`, Atlassian URL, registered MCP servers, etc.),
+  surfaces every finding to the user, and never writes the config
+  silently. References: `references/issue-trackers.md`. Helper:
+  `scripts/bugs-needing-sync.sh`.
+- **Bi-directional sync.** Push (markdown → tracker) at file time or
+  BRB time; **pull** (tracker → markdown) at BRB start (`pull.onBRBStart`,
+  default ON) and during re-tests (`pull.onReTest`, default ON).
+  Reconciliation rules favour the tracker for `fixed` / `verified` and
+  the markdown for `open` / `in-progress`; divergences surface as
+  user-decision diffs. Bug front-matter gains `Tracker / Linear`,
+  `Tracker / GitHub`, `Tracker / Jira`, `Tracker / Notion`, and
+  `Tracker / lastSyncedAt` rows. Helper:
+  `scripts/bugs-needing-pull.sh`. Tracker-only bugs surfaced to the
+  user — never auto-imported (`pull.createLocalForUntracked: "ask"`
+  by default).
+- **Interactive Bug Review Board workflow.** A separate
+  facilitator-agent prompt (`templates/brb-interactive-prompt.md`)
+  opens the meeting with the pre-BRB pull, runs pattern-based triage
+  heuristics, presents bugs one by one, applies user decisions, syncs
+  the tracker, regenerates the HTML, and writes minutes
+  (`templates/brb-minutes.md`). Kept intentionally separate from the
+  auto pass so triage bias doesn't contaminate discovery. References:
+  `references/brb-interactive.md`.
+- **Pattern-based triage suggestions.** A catalog of named heuristics
+  (`same-suspect-file`, `steps-prefix-overlap`,
+  `same-persona-surface-outcome`, `same-console-error`,
+  `same-test-id`, `phase-cascade`, `cosmetic-cluster`,
+  `regression-marker`, `same-owner`) the agent runs at BRB start (and
+  optionally at auto-pass file time). Every suggestion cites the
+  heuristic name and the matching text — no embeddings, no LLM API,
+  no auto-merge. References: `references/triage-heuristics.md`.
+- **New `duplicate` bug status** (BRB-only transition, requires user
+  confirmation, records `Duplicate of: BUG-XXX`). Bug template gains
+  `Duplicate of` and `Linked bugs (related)` front-matter rows.
+- **iOS / iPadOS app testing playbook — curated cite hub.** When the
+  repo under QA is an iOS app project (detected via `*.xcodeproj`,
+  `Package.swift` with `.iOS`, `Podfile` with `platform :ios`, `ios/`
+  directory, etc.), the skill orchestrates and **defers actual
+  simulator driving** to the iOS community's purpose-built skills:
+  [AXe](https://github.com/cameroncooke/AXe) and
+  [XcodeBuildMCP](https://github.com/getsentry/XcodeBuildMCP) by
+  Cameron Cooke, [App Store Connect CLI](https://github.com/rudrankriyam/App-Store-Connect-CLI)
+  + [companion skills](https://github.com/rudrankriyam/app-store-connect-cli-skills)
+  by Rudrank Riyam, [ios-simulator-skill](https://github.com/conorluddy/ios-simulator-skill)
+  by Conor Luddy, [ios-build-verify](https://github.com/vermont42/ios-build-verify)
+  by Josh Adams, [baguette](https://github.com/tddworks/baguette) by
+  tddworks, [ios-idb-skill](https://github.com/haowu77/ios-idb-skill)
+  by Hao Wu, [serve-sim-skill](https://github.com/malopezr7/serve-sim-skill)
+  by malopezr7, [swiftui-autotest-skill](https://github.com/yusufkaran/swiftui-autotest-skill)
+  by Yusuf Karan, and [xcode-build-skill](https://github.com/pzep1/xcode-build-skill)
+  by pzep1. References: `references/ios-simulator-playbook.md`. The
+  iOS playbook is for iOS app projects only, **not** for testing web
+  apps on Mobile Safari.
+- **Extension story.** New `references/extending-the-skill.md`
+  documents how to add a tracker, heuristic, surface, or mode without
+  rewriting the skill. `qa-config.json` carries `version: 1` for
+  forward-compat; unknown fields are ignored. HTML report carries a
+  versioned `<!-- skill:running-bug-review-board v0.2 -->` comment
+  marker.
+
+### Changed
+
+- `SKILL.md` rewritten (449 lines, still under the 500-line cap). New
+  sections: Two workflows — Auto QA and Interactive BRB; Surfaces —
+  which playbook activates; Issue tracker integration; HTML report;
+  Pattern-based triage suggestions; Extending this skill. Mode picker,
+  Always / Never lists, References, Scripts, and Anti-patterns tables
+  updated.
+- Scaffolder (`scripts/scaffold-qa.sh`) now writes a stub
+  `docs/qa/qa-config.json` (with `issueTracker.type = "none"`) and a
+  `docs/qa/report/.gitkeep` so the discovery ceremony and the HTML
+  generator have somewhere to write. Printed next-steps hint extended
+  to mention the discovery ceremony, the project-type detection, the
+  HTML render step, and the separate-session rule for BRB.
+- `references/workflow.md` extended: detect project type and issue
+  tracker in step 2, run triage heuristics in step 6, generate HTML +
+  sync tracker in step 9, schedule interactive BRB as step 11.
+- `references/discovering-the-app.md` extended: project-type
+  detection table, issue-tracker discovery question template, monorepo
+  / mixed-project ask, output checklist now requires project type +
+  tracker + heuristic cluster summary.
+- `references/bug-filing.md` extended: step 0.5 (check heuristics
+  before filing), step 7 (sync to tracker if configured), step 8
+  (refresh HTML). Status transitions add `duplicate`. BRB-cadence
+  section replaced with a pointer to `brb-interactive.md`.
+- `references/browser-playbook.md` clarified: web apps only. The iOS
+  Simulator playbook is **not** the right tool for web-app QA.
+- `references/sequential-wrapup.md` and
+  `references/parallel-coordinator.md` extended to regenerate HTML at
+  end of merge and run the sync helpers.
+- Bug template and run-report / coordinator-merge templates updated
+  with tracker rows, HTML report path, tracker-sync mini-table, and
+  generated-artifacts section.
+
+### Compatibility
+
+- All additions are opt-in. v0.1 installs that don't run the discovery
+  ceremony, the heuristics, the pull, or the HTML render continue to
+  behave exactly as before.
+- `qa-config.json` schema is forward-compatible: unknown top-level
+  fields are ignored.
+- Bug front-matter additions are additive — existing rows keep their
+  labels.
+
+### Credit
+
+This release stands on the iOS community's work. Major thanks to:
+
+- **[Cameron Cooke](https://github.com/cameroncooke)** for
+  [AXe](https://github.com/cameroncooke/AXe) and
+  [XcodeBuildMCP](https://github.com/getsentry/XcodeBuildMCP) and for
+  popularizing the accessibility-tree-as-observation-primitive
+  pattern.
+- **[Rudrank Riyam](https://github.com/rudrankriyam)** for the
+  [App Store Connect CLI](https://github.com/rudrankriyam/App-Store-Connect-CLI)
+  and [companion skills](https://github.com/rudrankriyam/app-store-connect-cli-skills),
+  which thread QA evidence through to TestFlight and review tooling.
+- **[Conor Luddy](https://github.com/conorluddy)** for
+  [ios-simulator-skill](https://github.com/conorluddy/ios-simulator-skill),
+  the inspiration for layered helper-script skills.
+- **[Josh Adams](https://github.com/vermont42)** for
+  [ios-build-verify](https://github.com/vermont42/ios-build-verify),
+  for naming intents over raw CLIs.
+- **[tddworks](https://github.com/tddworks)** for
+  [baguette](https://github.com/tddworks/baguette), for the iOS 26
+  input path.
+- **[Hao Wu](https://github.com/haowu77)**,
+  **[malopezr7](https://github.com/malopezr7)**,
+  **[Yusuf Karan](https://github.com/yusufkaran)**,
+  **[pzep1](https://github.com/pzep1)**, and many others building in
+  the open under [agentskills.io](https://agentskills.io).
+
+[0.2.0]: https://github.com/RayFernando1337/rayfernando-skills/releases/tag/v0.2.0
+
+## Pre-0.2.0 history
+
 ### Changed
 
 - README install section rewritten with vendor-native install commands per agent: `droid plugin marketplace add` + `droid plugin install` for Factory Droid, `codex plugin marketplace add` + `codex plugin add` (or `/plugins` TUI on Codex 0.125 and earlier) for Codex CLI, and the existing two-line `/plugin marketplace add` flow for Claude Code. Cursor and other agents without a CLI installer are routed to the cross-vendor `npx skills add` from [vercel-labs/skills](https://github.com/vercel-labs/skills). The manual symlink loop is now a fallback at the end of the section instead of the headline path.

@@ -176,7 +176,7 @@ rayfernando-skills/
 │       │   └── plugin.json           # plugin manifest
 │       └── skills/
 │           └── running-bug-review-board/
-│               ├── SKILL.md          # main entry (~265 lines)
+│               ├── SKILL.md          # main entry (~450 lines)
 │               ├── references/       # loaded on demand
 │               │   ├── workflow.md
 │               │   ├── discovering-the-app.md
@@ -184,13 +184,29 @@ rayfernando-skills/
 │               │   ├── test-accounts.md
 │               │   ├── session-hygiene.md
 │               │   ├── browser-playbook.md
+│               │   ├── ios-simulator-playbook.md      # NEW v0.2
 │               │   ├── parallel-coordinator.md
 │               │   ├── sequential-wrapup.md
 │               │   ├── bug-filing.md
 │               │   ├── gate-merge.md
+│               │   ├── issue-trackers.md              # NEW v0.2
+│               │   ├── brb-interactive.md             # NEW v0.2
+│               │   ├── triage-heuristics.md           # NEW v0.2
+│               │   ├── html-report-style-guide.md     # NEW v0.2
+│               │   ├── extending-the-skill.md         # NEW v0.2
 │               │   └── templates/    # bug, test-plan, run-report, merge skeletons
+│               │       ├── brb-interactive-prompt.md  # NEW v0.2
+│               │       ├── brb-minutes.md             # NEW v0.2
+│               │       ├── qa-config.example.json     # NEW v0.2
+│               │       └── html-report/               # NEW v0.2
+│               │           ├── assets.css
+│               │           ├── index.html
+│               │           ├── bug.html
+│               │           └── run.html
 │               └── scripts/
-│                   └── scaffold-qa.sh   # universal QA folder scaffold
+│                   ├── scaffold-qa.sh                 # extended in v0.2
+│                   ├── bugs-needing-sync.sh           # NEW v0.2
+│                   └── bugs-needing-pull.sh           # NEW v0.2
 ├── .github/workflows/release.yml     # builds claude.ai zip on tag push
 ├── CHANGELOG.md
 ├── LICENSE
