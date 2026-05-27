@@ -83,7 +83,7 @@
     "title": "QA Report"
   },
 
-  "$comment_platforms": "Surfaces the agent tests against. See references/browser-playbook.md and references/ios-simulator-playbook.md.",
+  "$comment_platforms": "What the repo under QA actually is. Web app -> see references/browser-playbook.md. iOS / iPadOS app -> see references/ios-simulator-playbook.md. Set ios.enabled=true ONLY when the repo IS an iOS app project (presence of *.xcodeproj, Package.swift with .iOS, Podfile with platform :ios, ios/ directory, etc.). The iOS path is for native iOS app QA, NOT for testing a web app on Mobile Safari.",
   "platforms": {
     "web": {
       "primaryViewport": "375x812",
@@ -91,10 +91,14 @@
     },
     "ios": {
       "enabled": false,
+      "$comment_devices": "Simulator names from `xcrun simctl list devices`. The test plan derives device coverage from here.",
       "devices": ["iPhone 17 Pro", "iPad Pro 13-inch"],
-      "url": "http://localhost:3000",
-      "$comment_preferred": "AXe|baguette|XcodeBuildMCP|ios-build-verify|idb — companion skill / CLI the agent reaches for first when input is required.",
-      "preferred": "AXe"
+      "$comment_preferred": "Companion skill / CLI the agent reaches for first. AXe|baguette|XcodeBuildMCP|ios-build-verify|ios-simulator-skill|idb|serve-sim|swiftui-autotest|xcode-build.",
+      "preferred": "AXe",
+      "$comment_scheme": "Xcode scheme for build + test. Optional; companions can auto-detect.",
+      "scheme": "MyApp",
+      "$comment_minOSVersion": "Minimum supported iOS version per Info.plist.",
+      "minOSVersion": "17.0"
     }
   }
 }
