@@ -80,13 +80,18 @@ for bug_file in "$BUGS_DIR"/BUG-*.md; do
 
   # Extract the tracker row's value (between the second and third `|`).
   # Empty value or value enclosed in *(...)* placeholder both mean
-  # "needs sync".
-  value=$(awk -F'|' -v label="**$LABEL**" '
-    $2 ~ ("^[[:space:]]*" label "[[:space:]]*$") {
-      v = $3
-      gsub(/^[[:space:]]+|[[:space:]]+$/, "", v)
-      print v
-      exit
+  # "needs sync". Uses awk to find the row by exact label match (no
+  # regex interpolation — `**` in the label would break the pattern).
+  value=$(awk -F'|' -v want="**$LABEL**" '
+    {
+      key = $2
+      gsub(/^[[:space:]]+|[[:space:]]+$/, "", key)
+      if (key == want) {
+        v = $3
+        gsub(/^[[:space:]]+|[[:space:]]+$/, "", v)
+        print v
+        exit
+      }
     }
   ' "$bug_file")
 

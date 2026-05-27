@@ -97,9 +97,12 @@ for bug_file in "$BUGS_DIR"/BUG-*.md; do
 
   # Only consider bugs that already have a tracker ID (an empty tracker
   # row means "needs push", handled by bugs-needing-sync.sh).
-  tracker_id=$(awk -F'|' -v label="**$TRACKER_LABEL**" '
-    $2 ~ ("^[[:space:]]*" label "[[:space:]]*$") {
-      v=$3; gsub(/^[[:space:]]+|[[:space:]]+$/, "", v); print v; exit
+  tracker_id=$(awk -F'|' -v want="**$TRACKER_LABEL**" '
+    {
+      key=$2; gsub(/^[[:space:]]+|[[:space:]]+$/, "", key)
+      if (key == want) {
+        v=$3; gsub(/^[[:space:]]+|[[:space:]]+$/, "", v); print v; exit
+      }
     }
   ' "$bug_file")
 
@@ -108,8 +111,11 @@ for bug_file in "$BUGS_DIR"/BUG-*.md; do
   fi
 
   last_synced=$(awk -F'|' '
-    $2 ~ /^[[:space:]]*\*\*Tracker \/ lastSyncedAt\*\*[[:space:]]*$/ {
-      v=$3; gsub(/^[[:space:]]+|[[:space:]]+$/, "", v); print v; exit
+    {
+      key=$2; gsub(/^[[:space:]]+|[[:space:]]+$/, "", key)
+      if (key == "**Tracker / lastSyncedAt**") {
+        v=$3; gsub(/^[[:space:]]+|[[:space:]]+$/, "", v); print v; exit
+      }
     }
   ' "$bug_file")
 
