@@ -328,14 +328,30 @@ fi
 cat <<EOF
 
 Done. Next steps:
-  1. Open the test plan and fill scenario tables from:
+  1. Run the discovery ceremony in references/issue-trackers.md to pick
+     and confirm your issue tracker (Linear, GitHub, Jira, Notion, or
+     none). The agent rewrites docs/qa/qa-config.json once you confirm.
+  2. Detect the project type in references/discovering-the-app.md.
+     If the repo is a web app, use references/browser-playbook.md.
+     If the repo is an iOS / iPadOS app project (*.xcodeproj,
+     Package.swift with .iOS, Podfile with platform :ios, etc.), use
+     references/ios-simulator-playbook.md and pick a companion skill
+     (AXe / XcodeBuildMCP / ios-build-verify / ios-simulator-skill / …).
+  3. Open the test plan and fill scenario tables from:
        - docs/phases/phase-${PHASE_PADDED:-NN}-*.md (checkboxes / scope)
        - docs/QA_GATES.md (Gate ${PHASE_NUM:-N} items)
        - docs/PRODUCT_SPEC.md or README (user-flow context)
-  2. Pick mode:
+  4. Pick mode:
        - Parallel:   ~/.agents/skills/running-bug-review-board/references/parallel-coordinator.md
        - Sequential: ~/.agents/skills/running-bug-review-board/references/sequential-wrapup.md
-  3. Per-shard reports go to docs/qa/runs/QA-<letter>-run-${RUN_DATE}.md
+  5. Per-shard reports go to docs/qa/runs/QA-<letter>-run-${RUN_DATE}.md
      (template: ~/.agents/skills/running-bug-review-board/references/templates/run-report.md)
-  4. Final verdict goes in docs/qa/runs/COORDINATOR-MERGE-${RUN_DATE}.md
+  6. Final verdict goes in docs/qa/runs/COORDINATOR-MERGE-${RUN_DATE}.md
+  7. Apply references/html-report-style-guide.md to generate
+     docs/qa/report/index.html (plus per-bug and per-run pages) so the
+     team can open the dashboard without cloning. Markdown stays the
+     source of truth; HTML is the read-only view.
+  8. For interactive triage (the actual Bug Review Board), start a
+     SEPARATE agent session with templates/brb-interactive-prompt.md.
+     Running BRB in the same session as the auto pass causes bias.
 EOF
