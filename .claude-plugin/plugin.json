@@ -1,0 +1,22 @@
+{
+  "name": "rayfernando-skills",
+  "version": "0.1.0",
+  "description": "Ray Fernando's collection of Skill files. Currently ships running-bug-review-board: a real-user QA + Bug Review Board (BRB) workflow used to test apps like a customer, file structured bug reports, run parallel or sequential QA passes, and produce a YES/NO sign-off per phase. Repo-agnostic and browser-tool-agnostic.",
+  "author": {
+    "name": "Ray Fernando",
+    "url": "https://github.com/RayFernando1337"
+  },
+  "homepage": "https://github.com/RayFernando1337/rayfernando-skills",
+  "repository": "https://github.com/RayFernando1337/rayfernando-skills",
+  "license": "Apache-2.0",
+  "keywords": [
+    "qa",
+    "manual-testing",
+    "bug-review-board",
+    "browser-testing",
+    "real-user-testing",
+    "phase-qa",
+    "ux-bugs",
+    "pm-qa-engineer"
+  ]
+}
