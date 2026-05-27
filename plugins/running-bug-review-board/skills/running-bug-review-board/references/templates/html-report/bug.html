@@ -3,161 +3,160 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
-  <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
-  <title>BUG-{{NNN}} — {{TITLE}}</title>
+  <meta name="theme-color" content="#FAFAF7" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#131311" media="(prefers-color-scheme: dark)">
+  <title>BUG-{{NNN}} — {{TITLE}} | {{REPORT_TITLE}}</title>
   <link rel="stylesheet" href="../assets.css">
-  <!-- skill:running-bug-review-board v0.2 -->
+  <!-- skill:running-bug-review-board v0.3 -->
 </head>
 <body>
-  <header class="topbar">
-    <div class="topbar-inner">
-      <h1 class="topbar-title">
-        <a href="../index.html" style="color: inherit;">{{REPORT_TITLE}}</a>
-      </h1>
-      <p class="topbar-meta">
-        <a href="../index.html">← Dashboard</a>
-      </p>
+
+  <header class="masthead">
+    <div class="masthead-inner">
+      <h1 class="masthead-title"><a href="../index.html">{{REPORT_TITLE}}</a></h1>
+      <p class="masthead-meta"><a href="../index.html">← all bugs</a></p>
     </div>
   </header>
 
-  <main class="container-wide">
-    <article class="bug">
+  <main>
+    <article class="read has-rail">
 
-      <aside class="bug-meta" aria-label="Bug metadata">
-        <h2 class="bug-meta-title">BUG-{{NNN}}</h2>
-        <dl>
-          <div>
-            <dt>Status</dt>
-            <dd>
-              <span class="pill pill-{{STATUS}}">
-                <span class="dot"></span> {{STATUS_LABEL}}
-                {{#IS_DUPLICATE}}<a href="BUG-{{DUPLICATE_OF}}.html">BUG-{{DUPLICATE_OF}}</a>{{/IS_DUPLICATE}}
-              </span>
-            </dd>
-          </div>
-          <div>
-            <dt>Priority</dt>
-            <dd><span class="chip chip-{{PRIORITY_LOWER}}">{{PRIORITY}}</span></dd>
-          </div>
-          <div><dt>Phase</dt><dd>{{PHASE}}</dd></div>
-          <div><dt>Test ID</dt><dd><code>{{TEST_ID}}</code></dd></div>
-          <div><dt>Gate</dt><dd>{{GATE_ITEM}}</dd></div>
-          <div>
-            <dt>Reported</dt>
-            <dd>
-              <time datetime="{{REPORTED_ISO}}">{{REPORTED_HUMAN}}</time>
-              by {{REPORTED_BY}}
-            </dd>
-          </div>
-          {{#FIXED_IN}}
-          <div><dt>Fixed in</dt><dd><a href="{{FIXED_IN}}">{{FIXED_IN_LABEL}}</a></dd></div>
-          {{/FIXED_IN}}
-          {{#VERIFIED_BY}}
-          <div><dt>Verified by</dt><dd>{{VERIFIED_BY}}</dd></div>
-          {{/VERIFIED_BY}}
-          {{#ENVIRONMENT}}
-          <div><dt>Environment</dt><dd>{{ENVIRONMENT}}</dd></div>
-          {{/ENVIRONMENT}}
-          {{#TRACKER_LINEAR}}
-          <div><dt>Linear</dt><dd><a href="{{TRACKER_LINEAR_URL}}" class="tag tag-tracker">{{TRACKER_LINEAR}}</a></dd></div>
-          {{/TRACKER_LINEAR}}
-          {{#TRACKER_GITHUB}}
-          <div><dt>GitHub</dt><dd><a href="{{TRACKER_GITHUB_URL}}" class="tag tag-tracker">{{TRACKER_GITHUB}}</a></dd></div>
-          {{/TRACKER_GITHUB}}
-          {{#TRACKER_JIRA}}
-          <div><dt>Jira</dt><dd><a href="{{TRACKER_JIRA_URL}}" class="tag tag-tracker">{{TRACKER_JIRA}}</a></dd></div>
-          {{/TRACKER_JIRA}}
-          {{#LAST_SYNCED_AT}}
-          <div><dt>Last synced</dt><dd><time datetime="{{LAST_SYNCED_ISO}}">{{LAST_SYNCED_HUMAN}}</time></dd></div>
-          {{/LAST_SYNCED_AT}}
-          {{#RELATED_BUGS}}
-          <div><dt>Related</dt><dd>{{RELATED_BUG_LINKS}}</dd></div>
-          {{/RELATED_BUGS}}
-        </dl>
-      </aside>
+      <div class="read-main">
 
-      <div class="bug-body">
-        <h1 class="bug-title">{{TITLE}}</h1>
+        <!-- ========================================================
+          Article header — the engineer's first glance
+          ========================================================
+          Order matters here. In the order the eye reads them:
+            1. Eyebrow  : priority + phase + status + tracker
+            2. Title    : large, what is this?
+            3. Deck     : one sentence on why we care
+        ======================================================== -->
+        <header class="article-header">
+          <p class="eyebrow">
+            <span class="pri">{{PRIORITY}}</span><span class="sep">·</span>Phase {{PHASE}}<span class="sep">·</span>{{STATUS_LABEL}}{{#TRACKER_ANY}}<span class="sep">·</span>{{TRACKER_FIRST_ID}}{{/TRACKER_ANY}}
+          </p>
+          <h1 class="article-title">{{TITLE}}</h1>
+          <p class="article-deck">{{SUMMARY}}</p>
+        </header>
 
-        <section class="bug-section" id="summary">
-          <h2>Summary</h2>
-          <p>{{SUMMARY}}</p>
+        <!-- ========================================================
+          Impact — pull-quote. What does a user experience if this
+          ships unfixed? Set in serif for editorial weight.
+        ======================================================== -->
+        {{#IMPACT}}
+        <aside class="article-impact">
+          <p class="eyebrow">Impact</p>
+          <p>{{IMPACT}}</p>
+        </aside>
+        {{/IMPACT}}
+
+        <!-- ========================================================
+          Actual / Expected — two short paragraphs, side by side
+          in feeling. We deliberately put Actual first because
+          that's what the engineer asks: "what's broken?"
+        ======================================================== -->
+        <section class="article-section article-expectation">
+          <dl>
+            <dt>What's happening</dt>
+            <dd>{{ACTUAL_HTML}}</dd>
+            <dt>What should happen</dt>
+            <dd>{{EXPECTED_HTML}}</dd>
+          </dl>
         </section>
 
-        <section class="bug-section" id="steps">
+        <!-- ========================================================
+          Risk to fix — engineer's marginal note. Often empty when
+          QA files the bug; populated during the BRB. Hidden when
+          empty, never showing a placeholder.
+        ======================================================== -->
+        {{#RISK_TO_FIX}}
+        <aside class="article-risk">
+          <p class="eyebrow">Risk to fix</p>
+          <p>{{RISK_TO_FIX}}</p>
+        </aside>
+        {{/RISK_TO_FIX}}
+
+        <!-- ========================================================
+          Steps to reproduce — numbered, lowercase-leading, with a
+          monospace gutter. No icons.
+        ======================================================== -->
+        <section class="article-section article-steps">
           <h2>Steps to reproduce</h2>
           <ol>
             {{STEPS_ITEMS}}
           </ol>
         </section>
 
-        <section class="bug-section" id="expected">
-          <h2>Expected result</h2>
-          {{EXPECTED_HTML}}
-        </section>
-
-        <section class="bug-section" id="actual">
-          <h2>Actual result</h2>
-          {{ACTUAL_HTML}}
-        </section>
-
-        {{#ENVIRONMENT_DETAILS}}
-        <section class="bug-section" id="environment-details">
-          <h2>Environment details</h2>
-          {{ENVIRONMENT_DETAILS_HTML}}
-        </section>
-        {{/ENVIRONMENT_DETAILS}}
-
-        <section class="bug-section" id="evidence">
+        <!-- ========================================================
+          Evidence — console first (cheapest signal), then server /
+          network, then images. Images at the bottom because they're
+          the bulkiest and the engineer often doesn't need them.
+        ======================================================== -->
+        <section class="article-section">
           <h2>Evidence</h2>
 
           {{#CONSOLE_ERRORS}}
-          <h3 class="bug-section-subtitle">Console errors</h3>
-          <pre><code>{{CONSOLE_ERRORS}}</code></pre>
+          <div class="article-evidence-block">
+            <h3>Console</h3>
+            <pre><code>{{CONSOLE_ERRORS}}</code></pre>
+          </div>
           {{/CONSOLE_ERRORS}}
 
           {{#SERVER_DB}}
-          <h3 class="bug-section-subtitle">Server / DB</h3>
-          {{SERVER_DB_HTML}}
+          <div class="article-evidence-block">
+            <h3>Server / DB</h3>
+            {{SERVER_DB_HTML}}
+          </div>
           {{/SERVER_DB}}
 
           {{#NETWORK}}
-          <h3 class="bug-section-subtitle">Network</h3>
-          {{NETWORK_HTML}}
+          <div class="article-evidence-block">
+            <h3>Network</h3>
+            {{NETWORK_HTML}}
+          </div>
           {{/NETWORK}}
 
           {{#SCREENSHOTS}}
-          <h3 class="bug-section-subtitle">Screenshots</h3>
-          <div class="evidence-gallery">
-            {{SCREENSHOT_TILES}}
-            <!-- Each tile:
-            <a class="evidence-tile" href="../../bug-reports/assets/BUG-{{NNN}}/01-step.png" target="_blank" rel="noopener">
-              <img loading="lazy" src="../../bug-reports/assets/BUG-{{NNN}}/01-step.png" alt="01 — step description">
-              <figcaption>01-step.png</figcaption>
-            </a>
-            -->
+          <div class="article-evidence-block">
+            <h3>Screenshots</h3>
+            <ul class="article-evidence-gallery">
+              {{SCREENSHOT_TILES}}
+              <!-- Each tile:
+              <li>
+                <a href="../../bug-reports/assets/BUG-{NNN}/01-step.png" target="_blank" rel="noopener">
+                  <img loading="lazy" src="../../bug-reports/assets/BUG-{NNN}/01-step.png" alt="step 01 — short description">
+                  <figcaption>01-step.png</figcaption>
+                </a>
+              </li>
+              -->
+            </ul>
           </div>
           {{/SCREENSHOTS}}
 
           {{#IOS_SCREENSHOTS}}
-          <h3 class="bug-section-subtitle">iOS Simulator screenshots</h3>
-          <div class="evidence-gallery">
-            {{IOS_SCREENSHOT_TILES}}
+          <div class="article-evidence-block">
+            <h3>iOS simulator</h3>
+            <ul class="article-evidence-gallery">
+              {{IOS_SCREENSHOT_TILES}}
+            </ul>
           </div>
           {{/IOS_SCREENSHOTS}}
         </section>
 
         {{#NOTES}}
-        <section class="bug-section" id="notes">
+        <section class="article-section">
           <h2>Notes</h2>
           {{NOTES_HTML}}
         </section>
         {{/NOTES}}
 
-        <section class="bug-section" id="triage">
+        <!-- ========================================================
+          Triage log — table of small caps + dates. The history of
+          this bug's decisions.
+        ======================================================== -->
+        <section class="article-section article-triage">
           <h2>Triage log</h2>
-          <table class="triage-log">
+          <table>
             <thead>
               <tr><th>Date</th><th>Who</th><th>Action</th></tr>
             </thead>
@@ -166,18 +165,106 @@
             </tbody>
           </table>
         </section>
+
       </div>
+
+      <!-- ========================================================
+        Right rail — quiet metadata. Hidden on mobile; on desktop
+        it sits to the right of the main column with no card or
+        background, just hairline rules between blocks.
+      ======================================================== -->
+      <aside class="read-rail">
+
+        <div class="rail-block">
+          <dt>Bug</dt>
+          <dd><code>BUG-{{NNN}}</code></dd>
+        </div>
+
+        <div class="rail-block">
+          <dt>Test ID</dt>
+          <dd><code>{{TEST_ID}}</code>{{#GATE_ITEM}} · Gate {{GATE_ITEM}}{{/GATE_ITEM}}</dd>
+        </div>
+
+        <div class="rail-block">
+          <dt>Reported</dt>
+          <dd><time datetime="{{REPORTED_ISO}}">{{REPORTED_HUMAN}}</time> · {{REPORTED_BY}}</dd>
+        </div>
+
+        {{#ENVIRONMENT}}
+        <div class="rail-block">
+          <dt>Environment</dt>
+          <dd>{{ENVIRONMENT}}</dd>
+        </div>
+        {{/ENVIRONMENT}}
+
+        {{#FIXED_IN}}
+        <div class="rail-block">
+          <dt>Fixed in</dt>
+          <dd><a href="{{FIXED_IN}}">{{FIXED_IN_LABEL}}</a></dd>
+        </div>
+        {{/FIXED_IN}}
+
+        {{#VERIFIED_BY}}
+        <div class="rail-block">
+          <dt>Verified by</dt>
+          <dd>{{VERIFIED_BY}}</dd>
+        </div>
+        {{/VERIFIED_BY}}
+
+        {{#TRACKER_LINEAR}}
+        <div class="rail-block">
+          <dt>Linear</dt>
+          <dd><a href="{{TRACKER_LINEAR_URL}}">{{TRACKER_LINEAR}}</a></dd>
+        </div>
+        {{/TRACKER_LINEAR}}
+
+        {{#TRACKER_GITHUB}}
+        <div class="rail-block">
+          <dt>GitHub</dt>
+          <dd><a href="{{TRACKER_GITHUB_URL}}">{{TRACKER_GITHUB}}</a></dd>
+        </div>
+        {{/TRACKER_GITHUB}}
+
+        {{#TRACKER_JIRA}}
+        <div class="rail-block">
+          <dt>Jira</dt>
+          <dd><a href="{{TRACKER_JIRA_URL}}">{{TRACKER_JIRA}}</a></dd>
+        </div>
+        {{/TRACKER_JIRA}}
+
+        {{#LAST_SYNCED_AT}}
+        <div class="rail-block">
+          <dt>Last synced</dt>
+          <dd><time datetime="{{LAST_SYNCED_ISO}}">{{LAST_SYNCED_HUMAN}}</time></dd>
+        </div>
+        {{/LAST_SYNCED_AT}}
+
+        {{#IS_DUPLICATE}}
+        <div class="rail-block">
+          <dt>Duplicate of</dt>
+          <dd><a href="BUG-{{DUPLICATE_OF}}.html">BUG-{{DUPLICATE_OF}}</a></dd>
+        </div>
+        {{/IS_DUPLICATE}}
+
+        {{#RELATED_BUGS}}
+        <div class="rail-block">
+          <dt>Related</dt>
+          <dd>{{RELATED_BUG_LINKS}}</dd>
+        </div>
+        {{/RELATED_BUGS}}
+
+      </aside>
 
     </article>
   </main>
 
-  <footer class="footer">
-    <p class="footer-meta">
-      Generated <time datetime="{{GENERATED_ISO}}">{{GENERATED_HUMAN}}</time>
-      by the <code>running-bug-review-board</code> skill v0.2.
-      To change this bug's state, edit
+  <footer class="colophon">
+    <p>
+      Edit
       <a href="../../bug-reports/BUG-{{NNN}}-{{SLUG}}.md"><code>BUG-{{NNN}}-{{SLUG}}.md</code></a>
-      and regenerate.
+      and regenerate. Generated
+      <time datetime="{{GENERATED_ISO}}">{{GENERATED_HUMAN}}</time>
+      by the <code>running-bug-review-board</code> skill v0.3.
     </p>
   </footer>
 </body>

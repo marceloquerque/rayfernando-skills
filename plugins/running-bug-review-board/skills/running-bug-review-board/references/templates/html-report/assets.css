@@ -1,155 +1,125 @@
-/* assets.css — running-bug-review-board v0.2 HTML report stylesheet
+/* assets.css — running-bug-review-board v0.3 HTML report stylesheet
  *
- * Apple-language design tokens + components. The agent writes this file
- * verbatim into docs/qa/report/assets.css on every regenerate. See
- * ../../html-report-style-guide.md for the contract.
+ * Design philosophy: Zite + Dieter Rams. Less, but better.
+ *
+ * - Typography does the work, not color. Priority, status, and verdict
+ *   are communicated through size, weight, and position — not through
+ *   coloured chips, pills, or traffic-light palettes.
+ * - One ink colour for body, one quiet accent for links / actions. The
+ *   page is paper.
+ * - Hairline rules and generous whitespace separate sections. Cards
+ *   are deprecated; sections are sections.
+ * - A narrow reading column (~640px) keeps prose comfortable on any
+ *   screen. On desktop the column gains a quiet right rail for
+ *   metadata; on mobile it collapses to a single thumb-friendly
+ *   stack.
+ * - Dark mode is ink-on-near-black, not inverted candy.
+ *
+ * Source: html-report-style-guide.md.
  */
 
 /* ============================================================
- * 1. Design tokens — light defaults
+ * 1. Reset + base
+ * ============================================================ */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; text-rendering: optimizeLegibility; }
+body { margin: 0; }
+img, video { max-width: 100%; height: auto; display: block; }
+table { border-collapse: collapse; width: 100%; }
+button { font: inherit; }
+
+/* ============================================================
+ * 2. Design tokens
  * ============================================================ */
 :root {
-  /* Apple system colors — default light */
-  --systemRed:    #FF3B30;
-  --systemOrange: #FF9500;
-  --systemYellow: #FFCC00;
-  --systemGreen:  #34C759;
-  --systemMint:   #00C7BE;
-  --systemTeal:   #30B0C7;
-  --systemCyan:   #32ADE6;
-  --systemBlue:   #007AFF;
-  --systemIndigo: #5856D6;
-  --systemPurple: #AF52DE;
-  --systemPink:   #FF2D55;
-  --systemBrown:  #A2845E;
-  --systemGray:   #8E8E93;
-  --systemGray2:  #AEAEB2;
-  --systemGray3:  #C7C7CC;
-  --systemGray4:  #D1D1D6;
-  --systemGray5:  #E5E5EA;
-  --systemGray6:  #F2F2F7;
+  /* Colour — almost monochrome by design.
+     Ink is the body text. Paper is the page. Rule is the hairline
+     separator. Mute is the colour of secondary metadata. Accent is the
+     only saturated colour and is reserved for interactive affordances
+     (links, the action button). No traffic-light palette. */
+  --ink:    #1A1A1A;
+  --paper:  #FAFAF7;          /* warm off-white, easier on the eye than #FFF */
+  --rule:   #D8D6D0;          /* hairline + thin underlines */
+  --mute:   #6B6864;          /* secondary text, metadata, captions */
+  --soft:   #F2F0EA;          /* sparingly used surface tint (run rows, evidence frame) */
+  --accent: #A5391A;          /* deep terracotta — links, CTA only */
+  --quote:  #2A2A2A;          /* slightly stronger than ink for pull quotes */
+  --warn-ink: #3A1A0A;        /* ink shift used for priority prefix; not a colour swatch */
 
-  /* Semantic surfaces */
-  --bg-page:       var(--systemGray6);
-  --bg-surface:    #FFFFFF;
-  --bg-card:       #FFFFFF;
-  --bg-elev:       #FFFFFF;
-  --border-subtle: var(--systemGray4);
-  --divider:       var(--systemGray5);
+  /* Typography — system fonts in a magazine register.
+     Display uses SF Pro Display (or Display Serif for editorial weight
+     if available) for headlines. Text uses SF Pro Text for body. Mono
+     for IDs. Serif fallback (Charter, Georgia) for hosts without SF. */
+  --font-display: ui-sans-serif, -apple-system, "SF Pro Display",
+                  BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial,
+                  sans-serif;
+  --font-text:    ui-sans-serif, -apple-system, "SF Pro Text",
+                  BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial,
+                  sans-serif;
+  --font-serif:   ui-serif, Charter, "Iowan Old Style", "Times New Roman",
+                  Georgia, serif;
+  --font-mono:    ui-monospace, "SF Mono", Menlo, Monaco, "Cascadia Mono",
+                  monospace;
 
-  /* Text */
-  --label:          #000000;
-  --secondaryLabel: rgba(60, 60, 67, 0.60);
-  --tertiaryLabel:  rgba(60, 60, 67, 0.30);
-  --link:           var(--systemBlue);
+  /* Scale — based on the iOS Large Dynamic Type scale, expanded at the
+     display end. The display sizes carry the magazine character. */
+  --size-display-xl: clamp(40px, 6vw, 64px);   /* verdict word, hero only */
+  --size-display-l:  clamp(28px, 4vw, 40px);   /* article title on bug detail */
+  --size-display-m:  clamp(22px, 3vw, 28px);   /* article title in list */
+  --size-deck:       clamp(18px, 2vw, 21px);   /* deck / impact pull */
+  --size-headline:   17px;                     /* section headings */
+  --size-body:       17px;                     /* prose */
+  --size-meta:       13px;                     /* metadata, footnote */
+  --size-micro:      11px;                     /* uppercase eyebrow */
 
-  /* Fonts */
-  --font-text: -apple-system, BlinkMacSystemFont, "SF Pro Text",
-               "SF Pro Display", "Helvetica Neue", Helvetica, Arial,
-               sans-serif;
-  --font-mono: ui-monospace, "SF Mono", Menlo, Monaco, "Cascadia Mono",
-               monospace;
+  --lh-display: 1.05;
+  --lh-deck:    1.35;
+  --lh-body:    1.55;
+  --lh-meta:    1.45;
 
-  /* Type scale (iOS Large) */
-  --size-large-title: 34px;  --lh-large-title: 41px;
-  --size-title-1:     28px;  --lh-title-1:     34px;
-  --size-title-2:     22px;  --lh-title-2:     28px;
-  --size-title-3:     20px;  --lh-title-3:     25px;
-  --size-headline:    17px;  --lh-headline:    22px;
-  --size-body:        17px;  --lh-body:        22px;
-  --size-callout:     16px;  --lh-callout:     21px;
-  --size-subhead:     15px;  --lh-subhead:     20px;
-  --size-footnote:    13px;  --lh-footnote:    18px;
-  --size-caption-1:   12px;  --lh-caption-1:   16px;
-  --size-caption-2:   11px;  --lh-caption-2:   13px;
+  /* Rhythm — based on 8 but more generous than v0.2 */
+  --s-1:  4px;
+  --s-2:  8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 24px;
+  --s-6: 32px;
+  --s-7: 48px;
+  --s-8: 64px;
+  --s-9: 96px;
 
-  /* Spacing — 8pt grid */
-  --space-1:  4px;
-  --space-2:  8px;
-  --space-3: 12px;
-  --space-4: 16px;
-  --space-5: 20px;
-  --space-6: 24px;
-  --space-8: 32px;
-  --space-10: 40px;
-  --space-12: 48px;
-  --space-16: 64px;
+  /* Layout — narrow reading column always; widen only on desktop with
+     a quiet right rail. */
+  --col-read: 640px;
+  --col-rail: 220px;
+  --gutter:   clamp(20px, 4vw, 48px);
 
-  /* Radius */
-  --radius-chip:    8px;
-  --radius-card:   12px;
-  --radius-surface:16px;
-  --radius-hero:   20px;
-
-  /* Layout */
-  --container-narrow: 768px;
-  --container-wide:  1024px;
-  --page-pad: clamp(20px, 4vw, 32px);
-  --card-pad: 20px;
-
-  /* Elevation (light mode shadows) */
-  --shadow-1: 0 1px 2px rgba(0,0,0,0.04), 0 1px 1px rgba(0,0,0,0.06);
-  --shadow-2: 0 2px 8px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
-  --shadow-3: 0 8px 24px rgba(0,0,0,0.12), 0 2px 6px rgba(0,0,0,0.04);
+  /* Hairlines instead of borders */
+  --rule-w:    1px;
 }
 
 /* ============================================================
- * 2. Dark mode — Apple defaults
+ * 3. Dark mode — ink on near-black, NOT inverted candy
  * ============================================================ */
 @media (prefers-color-scheme: dark) {
   :root {
-    --systemRed:    #FF453A;
-    --systemOrange: #FF9F0A;
-    --systemYellow: #FFD60A;
-    --systemGreen:  #30D158;
-    --systemMint:   #66D4CF;
-    --systemTeal:   #40C8E0;
-    --systemCyan:   #64D2FF;
-    --systemBlue:   #0A84FF;
-    --systemIndigo: #5E5CE6;
-    --systemPurple: #BF5AF2;
-    --systemPink:   #FF375F;
-    --systemBrown:  #AC8E68;
-    --systemGray:   #8E8E93;
-    --systemGray2:  #636366;
-    --systemGray3:  #48484A;
-    --systemGray4:  #3A3A3C;
-    --systemGray5:  #2C2C2E;
-    --systemGray6:  #1C1C1E;
-
-    --bg-page:       var(--systemGray6);
-    --bg-surface:    var(--systemGray5);
-    --bg-card:       var(--systemGray5);
-    --bg-elev:       var(--systemGray4);
-    --border-subtle: var(--systemGray3);
-    --divider:       var(--systemGray4);
-
-    --label:          #FFFFFF;
-    --secondaryLabel: rgba(235, 235, 245, 0.60);
-    --tertiaryLabel:  rgba(235, 235, 245, 0.30);
-
-    /* Apple convention: prefer borders over shadows in dark mode. */
-    --shadow-1: none;
-    --shadow-2: none;
-    --shadow-3: none;
-  }
-  .card, .bug-card, .hero, .bug-meta, .bug-section, .runs-table,
-  .triage-log, .filters {
-    border: 1px solid var(--border-subtle);
+    --ink:    #ECEAE3;
+    --paper:  #131311;
+    --rule:   #2E2D2A;
+    --mute:   #908C84;
+    --soft:   #1B1B18;
+    --accent: #E08263;          /* lifted terracotta for contrast */
+    --quote:  #F4F2EB;
+    --warn-ink: #F4D9C6;
   }
 }
 
 /* ============================================================
- * 3. Base
+ * 4. Body, links, headings
  * ============================================================ */
-*, *::before, *::after { box-sizing: border-box; }
-
-html { -webkit-text-size-adjust: 100%; }
-
-body {
-  margin: 0;
-  background: var(--bg-page);
-  color: var(--label);
+html, body {
+  background: var(--paper);
+  color: var(--ink);
   font-family: var(--font-text);
   font-size: var(--size-body);
   line-height: var(--lh-body);
@@ -158,551 +128,579 @@ body {
 }
 
 a {
-  color: var(--link);
+  color: var(--accent);
   text-decoration: none;
+  border-bottom: 1px solid transparent;
 }
-a:hover { text-decoration: underline; }
-
-code, pre {
-  font-family: var(--font-mono);
-  font-size: 0.92em;
+a:hover {
+  border-bottom-color: var(--accent);
+}
+a:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 2px;
 }
 
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin: 0 0 var(--s-3) 0;
+  color: var(--ink);
+}
+
+p { margin: 0 0 var(--s-4) 0; }
+p:last-child { margin-bottom: 0; }
+
+code, pre { font-family: var(--font-mono); font-size: 0.92em; }
 pre {
-  background: var(--bg-surface);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-chip);
-  padding: var(--space-3) var(--space-4);
+  padding: var(--s-4);
+  background: var(--soft);
+  border-left: var(--rule-w) solid var(--rule);
   overflow-x: auto;
   line-height: 1.5;
-}
-
-:focus-visible {
-  outline: 2px solid var(--systemBlue);
-  outline-offset: 2px;
-  border-radius: var(--radius-chip);
+  margin: 0 0 var(--s-4) 0;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    transition: none !important;
-    animation: none !important;
-  }
+  *, *::before, *::after { transition: none !important; animation: none !important; }
 }
 
 /* ============================================================
- * 4. Layout containers
+ * 5. Page chrome — a quiet masthead and a quiet footer
  * ============================================================ */
-.container,
-.container-wide {
-  width: 100%;
-  max-width: var(--container-wide);
-  margin: 0 auto;
-  padding-left: var(--page-pad);
-  padding-right: var(--page-pad);
+.masthead {
+  border-bottom: var(--rule-w) solid var(--rule);
+  padding: var(--s-5) var(--gutter) var(--s-4);
 }
-.container-narrow {
-  width: 100%;
-  max-width: var(--container-narrow);
+.masthead-inner {
+  max-width: var(--col-read);
   margin: 0 auto;
-  padding-left: var(--page-pad);
-  padding-right: var(--page-pad);
-}
-
-main { padding-block: var(--space-8); }
-
-/* ============================================================
- * 5. Top bar
- * ============================================================ */
-.topbar {
-  background: var(--bg-surface);
-  border-bottom: 1px solid var(--divider);
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  backdrop-filter: saturate(180%) blur(12px);
-  -webkit-backdrop-filter: saturate(180%) blur(12px);
-}
-.topbar-inner {
-  max-width: var(--container-wide);
-  margin: 0 auto;
-  padding: var(--space-4) var(--page-pad);
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  gap: var(--space-4);
+  gap: var(--s-4);
   flex-wrap: wrap;
 }
-.topbar-title {
-  margin: 0;
+.masthead-title {
+  font-family: var(--font-display);
   font-size: var(--size-headline);
-  line-height: var(--lh-headline);
   font-weight: 600;
-  letter-spacing: -0.01em;
-}
-.topbar-meta {
-  margin: 0;
-  font-size: var(--size-footnote);
-  line-height: var(--lh-footnote);
-  color: var(--secondaryLabel);
-}
-
-/* ============================================================
- * 6. Hero — verdict
- * ============================================================ */
-.hero {
-  background: var(--bg-surface);
-  border-radius: var(--radius-hero);
-  padding: var(--space-8);
-  box-shadow: var(--shadow-2);
-  margin-block: var(--space-6) var(--space-8);
-}
-.hero-eyebrow {
-  font-size: var(--size-subhead);
-  font-weight: 600;
-  color: var(--secondaryLabel);
-  margin-bottom: var(--space-2);
-}
-.hero-headline {
-  display: flex;
-  align-items: center;
-  gap: var(--space-4);
-  font-size: var(--size-large-title);
-  line-height: var(--lh-large-title);
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  margin-bottom: var(--space-6);
-}
-.hero-stats {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: var(--space-4);
-  margin: 0 0 var(--space-6) 0;
-}
-.hero-stats > div { padding: 0; margin: 0; }
-.hero-stats dt {
-  font-size: var(--size-footnote);
-  line-height: var(--lh-footnote);
-  color: var(--secondaryLabel);
-  margin: 0;
-}
-.hero-stats dd {
-  margin: var(--space-1) 0 0 0;
-  font-size: var(--size-title-2);
-  line-height: var(--lh-title-2);
-  font-weight: 700;
-  letter-spacing: -0.01em;
-}
-.hero-cta {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-3) var(--space-5);
-  background: var(--systemBlue);
-  color: #FFFFFF;
-  font-weight: 600;
-  border-radius: var(--radius-chip);
-}
-.hero-cta:hover { text-decoration: none; opacity: 0.9; }
-
-.hero-verdict.hero-YES { border-left: 4px solid var(--systemGreen); }
-.hero-verdict.hero-NO  { border-left: 4px solid var(--systemRed); }
-
-/* ============================================================
- * 7. Chips, pills, badges, tags
- * ============================================================ */
-.chip {
-  display: inline-flex;
-  align-items: center;
-  padding: 2px var(--space-2);
-  font-size: var(--size-footnote);
-  line-height: 1.3;
-  font-weight: 700;
-  border-radius: var(--radius-chip);
-  letter-spacing: 0.02em;
-}
-.chip-p0 { background: var(--systemRed);    color: #FFFFFF; }
-.chip-p1 { background: var(--systemOrange); color: #FFFFFF; }
-.chip-p2 { background: var(--systemYellow); color: #000000; }
-
-.badge {
-  display: inline-flex;
-  align-items: center;
-  padding: var(--space-1) var(--space-3);
-  border-radius: 999px;
-  font-size: var(--size-headline);
-  line-height: 1;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-}
-.badge-YES, .badge-yes { background: var(--systemGreen); color: #FFFFFF; }
-.badge-NO,  .badge-no  { background: var(--systemRed);   color: #FFFFFF; }
-
-.pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 2px var(--space-2);
-  font-size: var(--size-footnote);
-  line-height: 1.3;
-  font-weight: 600;
-  border-radius: 999px;
-  border: 1px solid var(--border-subtle);
-  color: var(--label);
-  background: var(--bg-surface);
-}
-.pill .dot {
-  display: inline-block;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--systemGray);
-}
-.pill-open        .dot { background: var(--systemRed); }
-.pill-in-progress .dot { background: var(--systemBlue); }
-.pill-fixed       .dot { background: var(--systemOrange); }
-.pill-verified    .dot { background: var(--systemGreen); }
-.pill-deferred    .dot { background: var(--systemBrown); }
-.pill-wontfix     .dot { background: var(--systemGray); }
-.pill-duplicate   .dot { background: var(--systemGray2); }
-
-.tag {
-  display: inline-flex;
-  align-items: center;
-  padding: 2px var(--space-2);
-  font-size: var(--size-caption-1);
-  line-height: 1.3;
-  font-weight: 600;
-  border-radius: var(--radius-chip);
-}
-.tag-tracker    { background: var(--systemIndigo); color: #FFFFFF; }
-.tag-regression { background: var(--systemPink);   color: #FFFFFF; }
-.tag-brb        { background: var(--systemPurple); color: #FFFFFF; }
-.tag-info       { background: var(--systemTeal);   color: #FFFFFF; }
-
-/* ============================================================
- * 8. Section titles
- * ============================================================ */
-.section-title {
-  font-size: var(--size-title-1);
-  line-height: var(--lh-title-1);
-  font-weight: 700;
-  letter-spacing: -0.01em;
-  margin: var(--space-10) 0 var(--space-4) 0;
-}
-
-/* ============================================================
- * 9. Bug board (dashboard)
- * ============================================================ */
-.board {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: var(--space-4);
-  margin-block: var(--space-4) var(--space-8);
-}
-.board-column {
-  background: var(--bg-surface);
-  border-radius: var(--radius-surface);
-  padding: var(--space-5);
-  box-shadow: var(--shadow-1);
-}
-.board-column-title {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  font-size: var(--size-headline);
-  line-height: var(--lh-headline);
-  font-weight: 600;
-  margin: 0 0 var(--space-4) 0;
-}
-
-.bug-card {
-  display: block;
-  background: var(--bg-card);
-  border-radius: var(--radius-card);
-  padding: var(--space-4);
-  margin-bottom: var(--space-3);
-  box-shadow: var(--shadow-1);
-  border: 1px solid var(--border-subtle);
-}
-.bug-card-head {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: var(--space-3);
-  margin-bottom: var(--space-2);
-}
-.bug-card-title {
-  font-size: var(--size-title-3);
-  line-height: var(--lh-title-3);
-  font-weight: 600;
-  color: var(--label);
-  letter-spacing: -0.01em;
-}
-.bug-card-chips {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: var(--space-1);
-  flex-shrink: 0;
-}
-.bug-card-summary {
-  margin: 0 0 var(--space-3) 0;
-  font-size: var(--size-callout);
-  line-height: var(--lh-callout);
-  color: var(--label);
-}
-.bug-card-meta {
-  font-size: var(--size-caption-1);
-  line-height: var(--lh-caption-1);
-  color: var(--secondaryLabel);
-  display: flex;
-  align-items: center;
-  gap: var(--space-1);
-  flex-wrap: wrap;
-}
-
-/* ============================================================
- * 10. Runs table
- * ============================================================ */
-.runs-table {
-  width: 100%;
-  border-collapse: collapse;
-  background: var(--bg-surface);
-  border-radius: var(--radius-surface);
-  overflow: hidden;
-  box-shadow: var(--shadow-1);
-}
-.runs-table th,
-.runs-table td {
-  padding: var(--space-3) var(--space-4);
-  text-align: left;
-  font-size: var(--size-subhead);
-  line-height: var(--lh-subhead);
-  border-bottom: 1px solid var(--divider);
-}
-.runs-table th {
-  font-size: var(--size-footnote);
-  font-weight: 600;
-  color: var(--secondaryLabel);
-  text-transform: uppercase;
   letter-spacing: 0.04em;
-  background: var(--bg-surface);
-}
-.runs-table tbody tr:last-child td { border-bottom: none; }
-.runs-table tbody tr:nth-child(2n) {
-  background: color-mix(in srgb, var(--bg-page) 40%, transparent);
-}
-
-/* ============================================================
- * 11. Bug detail page
- * ============================================================ */
-.bug {
-  display: grid;
-  grid-template-columns: 240px 1fr;
-  gap: var(--space-8);
-  align-items: start;
-}
-@media (max-width: 720px) {
-  .bug { grid-template-columns: 1fr; }
-}
-
-.bug-meta {
-  background: var(--bg-surface);
-  border-radius: var(--radius-surface);
-  padding: var(--space-5);
-  box-shadow: var(--shadow-1);
-  position: sticky;
-  top: 72px;
-}
-@media (max-width: 720px) {
-  .bug-meta { position: static; }
-}
-
-.bug-meta-title {
-  margin: 0 0 var(--space-3) 0;
-  font-family: var(--font-mono);
-  font-size: var(--size-headline);
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  color: var(--secondaryLabel);
-}
-.bug-meta dl {
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-}
-.bug-meta dt {
-  font-size: var(--size-caption-1);
-  line-height: var(--lh-caption-1);
-  font-weight: 600;
-  color: var(--secondaryLabel);
   text-transform: uppercase;
-  letter-spacing: 0.04em;
-  margin-bottom: 2px;
-}
-.bug-meta dd {
   margin: 0;
-  font-size: var(--size-subhead);
-  line-height: var(--lh-subhead);
 }
+.masthead-title a { color: var(--ink); border: 0; }
+.masthead-meta {
+  font-size: var(--size-meta);
+  color: var(--mute);
+  margin: 0;
+}
+.masthead-meta a { color: var(--mute); border: 0; }
+.masthead-meta a:hover { color: var(--ink); border: 0; }
 
-.bug-body {
-  min-width: 0;
-}
-.bug-title {
-  font-size: var(--size-title-1);
-  line-height: var(--lh-title-1);
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  margin: 0 0 var(--space-6) 0;
-}
-
-.bug-section {
-  background: var(--bg-surface);
-  border-radius: var(--radius-card);
-  padding: var(--space-5);
-  margin-bottom: var(--space-4);
-  box-shadow: var(--shadow-1);
-}
-.bug-section h2 {
-  font-size: var(--size-title-3);
-  line-height: var(--lh-title-3);
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  margin: 0 0 var(--space-3) 0;
-}
-.bug-section p { margin: 0 0 var(--space-3) 0; }
-.bug-section ol,
-.bug-section ul { padding-left: var(--space-6); margin: 0 0 var(--space-3) 0; }
-.bug-section li { margin-bottom: var(--space-2); }
-
-/* ============================================================
- * 12. Evidence gallery
- * ============================================================ */
-.evidence-gallery {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: var(--space-3);
-  margin-top: var(--space-4);
-}
-.evidence-tile {
-  display: block;
-  background: var(--bg-surface);
-  border-radius: var(--radius-chip);
-  overflow: hidden;
-  border: 1px solid var(--border-subtle);
-  transition: transform 120ms ease, box-shadow 120ms ease;
-}
-.evidence-tile:hover {
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-2);
-  text-decoration: none;
-}
-.evidence-tile img {
-  display: block;
-  width: 100%;
-  height: 180px;
-  object-fit: cover;
-  background: var(--bg-page);
-}
-.evidence-tile figcaption {
-  padding: var(--space-2) var(--space-3);
-  font-size: var(--size-caption-1);
-  font-family: var(--font-mono);
-  color: var(--secondaryLabel);
-}
-
-/* ============================================================
- * 13. Triage log table
- * ============================================================ */
-.triage-log {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: var(--space-2);
-}
-.triage-log th,
-.triage-log td {
-  padding: var(--space-2) var(--space-3);
-  text-align: left;
-  font-size: var(--size-footnote);
-  line-height: var(--lh-footnote);
-  border-bottom: 1px solid var(--divider);
-}
-.triage-log th {
-  color: var(--secondaryLabel);
-  font-weight: 600;
-}
-.triage-log td:first-child {
-  font-family: var(--font-mono);
-  white-space: nowrap;
-  color: var(--secondaryLabel);
-}
-
-/* ============================================================
- * 14. Filters
- * ============================================================ */
-.filters {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-3);
-  background: var(--bg-surface);
-  border-radius: var(--radius-card);
-  padding: var(--space-3) var(--space-4);
-  margin-block: var(--space-4) var(--space-6);
-  box-shadow: var(--shadow-1);
-}
-.filter-group {
-  font-size: var(--size-footnote);
-}
-.filter-group summary {
-  cursor: pointer;
-  font-weight: 600;
-  list-style: none;
-  padding: var(--space-1) var(--space-3);
-  border-radius: var(--radius-chip);
-  background: var(--bg-page);
-}
-.filter-group summary::-webkit-details-marker { display: none; }
-.filter-group[open] summary { color: var(--systemBlue); }
-.filter-group label {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-1);
-  margin-right: var(--space-3);
-  padding: var(--space-1) 0;
-}
-
-/* ============================================================
- * 15. Footer
- * ============================================================ */
-.footer {
-  margin-top: var(--space-16);
-  padding: var(--space-6) var(--page-pad);
-  border-top: 1px solid var(--divider);
+.colophon {
+  border-top: var(--rule-w) solid var(--rule);
+  margin-top: var(--s-9);
+  padding: var(--s-5) var(--gutter);
   text-align: center;
 }
-.footer-meta {
+.colophon p {
   margin: 0;
-  font-size: var(--size-footnote);
-  line-height: var(--lh-footnote);
-  color: var(--secondaryLabel);
+  font-size: var(--size-meta);
+  color: var(--mute);
+  max-width: var(--col-read);
+  margin-inline: auto;
 }
 
 /* ============================================================
- * 16. Print
+ * 6. Main column — magazine reading width
+ * ============================================================ */
+main { padding: var(--s-7) var(--gutter) var(--s-8); }
+
+.read {
+  max-width: var(--col-read);
+  margin: 0 auto;
+}
+
+@media (min-width: 1024px) {
+  .read.has-rail {
+    display: grid;
+    grid-template-columns: var(--col-read) var(--col-rail);
+    column-gap: var(--s-7);
+    max-width: calc(var(--col-read) + var(--col-rail) + var(--s-7));
+  }
+  .read.has-rail > .read-main { min-width: 0; }
+  .read.has-rail > .read-rail { padding-top: var(--s-6); }
+}
+
+/* ============================================================
+ * 7. Eyebrow + verdict (display type instead of badges)
+ *
+ *   .eyebrow         — small caps line above a headline
+ *   .verdict-word    — the single word YES / NO in display type
+ *   .verdict-line    — the sentence after the verdict
+ * ============================================================ */
+.eyebrow {
+  font-size: var(--size-micro);
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--mute);
+  margin: 0 0 var(--s-3) 0;
+}
+
+.verdict {
+  margin: 0 0 var(--s-7) 0;
+  padding-bottom: var(--s-6);
+  border-bottom: var(--rule-w) solid var(--rule);
+}
+.verdict-word {
+  font-family: var(--font-display);
+  font-size: var(--size-display-xl);
+  font-weight: 700;
+  line-height: var(--lh-display);
+  letter-spacing: -0.03em;
+  margin: 0 0 var(--s-3) 0;
+}
+.verdict-word.is-no::after {
+  content: ".";
+  color: var(--accent);
+}
+.verdict-line {
+  font-family: var(--font-serif);
+  font-size: var(--size-deck);
+  line-height: var(--lh-deck);
+  color: var(--quote);
+  margin: 0 0 var(--s-5) 0;
+  max-width: 32em;
+}
+.verdict-action {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  font-family: var(--font-text);
+  font-size: var(--size-body);
+  font-weight: 600;
+  color: var(--ink);
+  border-bottom: 2px solid var(--accent);
+  padding-bottom: 2px;
+}
+.verdict-action::after { content: "→"; color: var(--accent); }
+.verdict-action:hover { color: var(--accent); border-bottom-color: var(--accent); }
+
+/* ============================================================
+ * 8. Section title — magazine column header
+ * ============================================================ */
+.section-title {
+  font-family: var(--font-display);
+  font-size: var(--size-deck);
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  margin: var(--s-8) 0 var(--s-4) 0;
+  padding-bottom: var(--s-2);
+  border-bottom: var(--rule-w) solid var(--rule);
+}
+.section-title.is-quiet {
+  font-weight: 500;
+  font-size: var(--size-headline);
+  color: var(--mute);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* ============================================================
+ * 9. Bug list (dashboard) — articles, not cards.
+ *
+ *   <ol class="bug-list">
+ *     <li class="bug-list-item">
+ *       <a class="bug-list-link">
+ *         <p class="bug-list-meta">P0 · Phase 2 · Open · LIN-1244</p>
+ *         <h3 class="bug-list-title">…title…</h3>
+ *         <p class="bug-list-impact">…one-sentence impact / deck…</p>
+ *       </a>
+ *     </li>
+ *   </ol>
+ * ============================================================ */
+.bug-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.bug-list-item {
+  padding: var(--s-5) 0;
+  border-bottom: var(--rule-w) solid var(--rule);
+}
+.bug-list-item:last-child { border-bottom: 0; }
+.bug-list-link {
+  display: block;
+  color: var(--ink);
+  border: 0;
+}
+.bug-list-link:hover { border: 0; }
+.bug-list-link:hover .bug-list-title { text-decoration: underline; text-decoration-color: var(--rule); text-underline-offset: 4px; }
+
+.bug-list-meta {
+  font-size: var(--size-micro);
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--mute);
+  margin: 0 0 var(--s-2) 0;
+}
+.bug-list-meta .pri {
+  color: var(--warn-ink);
+  font-weight: 700;
+}
+.bug-list-meta .sep {
+  color: var(--rule);
+  margin: 0 0.5em;
+}
+
+.bug-list-title {
+  font-family: var(--font-display);
+  font-size: var(--size-display-m);
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: 1.15;
+  margin: 0 0 var(--s-2) 0;
+  color: var(--ink);
+}
+.bug-list-impact {
+  font-family: var(--font-serif);
+  font-size: var(--size-deck);
+  line-height: var(--lh-deck);
+  color: var(--quote);
+  margin: 0;
+  max-width: 40em;
+}
+
+/* Priority groups in the list — a small caps divider, no Kanban */
+.bug-group-head {
+  font-family: var(--font-text);
+  font-size: var(--size-micro);
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--mute);
+  margin: var(--s-7) 0 var(--s-3) 0;
+  padding-bottom: var(--s-2);
+  border-bottom: var(--rule-w) solid var(--ink);
+}
+.bug-group-head .count { color: var(--mute); font-weight: 500; }
+
+/* ============================================================
+ * 10. Bug detail — an article
+ * ============================================================ */
+.article-header { margin-bottom: var(--s-6); }
+.article-title {
+  font-family: var(--font-display);
+  font-size: var(--size-display-l);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  margin: 0 0 var(--s-3) 0;
+}
+.article-deck {
+  font-family: var(--font-serif);
+  font-size: var(--size-deck);
+  line-height: var(--lh-deck);
+  color: var(--quote);
+  margin: 0 0 var(--s-5) 0;
+  max-width: 32em;
+}
+
+.article-section { margin: var(--s-6) 0; }
+.article-section h2 {
+  font-family: var(--font-text);
+  font-size: var(--size-micro);
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--mute);
+  margin: 0 0 var(--s-3) 0;
+}
+
+/* Impact — set as a pull-quote without quote marks */
+.article-impact {
+  margin: var(--s-7) 0;
+  padding: var(--s-5) 0 var(--s-5) var(--s-5);
+  border-left: 2px solid var(--ink);
+}
+.article-impact p {
+  font-family: var(--font-serif);
+  font-size: var(--size-deck);
+  line-height: var(--lh-deck);
+  color: var(--quote);
+  margin: 0;
+  max-width: 32em;
+}
+.article-impact .eyebrow { margin-bottom: var(--s-2); }
+
+/* Risk-to-fix — a quiet engineer's marginal note */
+.article-risk {
+  margin: var(--s-6) 0;
+  padding: var(--s-4);
+  background: var(--soft);
+  border-left: 2px solid var(--rule);
+}
+.article-risk .eyebrow { margin-bottom: var(--s-2); }
+.article-risk p { margin: 0; color: var(--ink); }
+.article-risk.is-empty { display: none; }
+
+/* Actual / Expected — two short paragraphs */
+.article-expectation { margin: var(--s-6) 0; }
+.article-expectation dl { margin: 0; }
+.article-expectation dt {
+  font-size: var(--size-micro);
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--mute);
+  margin: 0 0 var(--s-2) 0;
+}
+.article-expectation dd { margin: 0 0 var(--s-5) 0; }
+
+/* Steps to reproduce */
+.article-steps ol {
+  margin: 0;
+  padding-left: 0;
+  list-style: none;
+  counter-reset: step;
+}
+.article-steps li {
+  position: relative;
+  padding: 0 0 var(--s-3) calc(var(--s-6) + var(--s-1));
+  counter-increment: step;
+}
+.article-steps li::before {
+  content: counter(step, decimal-leading-zero);
+  position: absolute;
+  left: 0;
+  top: 0.1em;
+  font-family: var(--font-mono);
+  font-size: var(--size-meta);
+  color: var(--mute);
+  letter-spacing: 0.05em;
+}
+
+/* Evidence — minimal frame, never a button-styled gallery */
+.article-evidence-block { margin: var(--s-5) 0; }
+.article-evidence-block h3 {
+  font-family: var(--font-text);
+  font-size: var(--size-micro);
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--mute);
+  margin: 0 0 var(--s-2) 0;
+}
+.article-evidence-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--s-3);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.article-evidence-gallery a {
+  display: block;
+  border: 0;
+}
+.article-evidence-gallery img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  background: var(--soft);
+  border: var(--rule-w) solid var(--rule);
+}
+.article-evidence-gallery figcaption {
+  font-family: var(--font-mono);
+  font-size: var(--size-micro);
+  color: var(--mute);
+  margin: var(--s-1) 0 0 0;
+}
+
+/* Triage log */
+.article-triage table {
+  margin: 0;
+}
+.article-triage th,
+.article-triage td {
+  text-align: left;
+  vertical-align: top;
+  padding: var(--s-2) var(--s-4) var(--s-2) 0;
+  border-bottom: var(--rule-w) solid var(--rule);
+  font-size: var(--size-meta);
+  line-height: var(--lh-meta);
+}
+.article-triage th {
+  font-weight: 600;
+  font-size: var(--size-micro);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--mute);
+}
+.article-triage td:first-child {
+  font-family: var(--font-mono);
+  color: var(--mute);
+  white-space: nowrap;
+}
+
+/* ============================================================
+ * 11. Right rail (desktop only) — quiet metadata
+ * ============================================================ */
+.rail-block {
+  margin-bottom: var(--s-5);
+  padding-bottom: var(--s-4);
+  border-bottom: var(--rule-w) solid var(--rule);
+}
+.rail-block:last-child { border-bottom: 0; }
+.rail-block dt {
+  font-size: var(--size-micro);
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--mute);
+  margin: 0 0 var(--s-1) 0;
+}
+.rail-block dd {
+  margin: 0;
+  font-size: var(--size-meta);
+  line-height: var(--lh-meta);
+}
+.rail-block dd code {
+  font-size: var(--size-meta);
+  color: var(--ink);
+}
+
+/* ============================================================
+ * 12. Recent runs — a quiet list, not a Kanban
+ * ============================================================ */
+.runs-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.runs-list-item {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--s-3);
+  align-items: baseline;
+  padding: var(--s-3) 0;
+  border-bottom: var(--rule-w) solid var(--rule);
+}
+.runs-list-item:last-child { border-bottom: 0; }
+.runs-list-when {
+  font-size: var(--size-meta);
+  color: var(--mute);
+  letter-spacing: 0.04em;
+}
+.runs-list-link {
+  font-family: var(--font-text);
+  font-size: var(--size-body);
+  color: var(--ink);
+  border-bottom: 1px dotted var(--rule);
+}
+.runs-list-link:hover { border-bottom-color: var(--ink); color: var(--ink); }
+.runs-list-counts {
+  font-family: var(--font-mono);
+  font-size: var(--size-meta);
+  color: var(--mute);
+  letter-spacing: 0.04em;
+}
+.runs-list-counts .v-yes { color: var(--ink); font-weight: 600; }
+.runs-list-counts .v-no  { color: var(--accent); font-weight: 600; }
+
+/* ============================================================
+ * 13. Filter bar — quiet text affordances, no buttons
+ *
+ *   <nav class="filter-bar">
+ *     <details class="filter">
+ *       <summary>Priority</summary>
+ *       <label><input type=checkbox …> P0</label>
+ *       …
+ *     </details>
+ *   </nav>
+ * ============================================================ */
+.filter-bar {
+  display: flex;
+  gap: var(--s-5);
+  flex-wrap: wrap;
+  margin: 0 0 var(--s-5) 0;
+  padding: var(--s-3) 0;
+  border-top: var(--rule-w) solid var(--rule);
+  border-bottom: var(--rule-w) solid var(--rule);
+}
+.filter { font-size: var(--size-meta); }
+.filter summary {
+  cursor: pointer;
+  list-style: none;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--ink);
+  user-select: none;
+}
+.filter summary::-webkit-details-marker { display: none; }
+.filter[open] summary { color: var(--accent); }
+.filter[open] {
+  padding: var(--s-2) 0 0 0;
+}
+.filter label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-1);
+  margin-right: var(--s-4);
+  margin-top: var(--s-2);
+  color: var(--ink);
+}
+.filter input[type=checkbox] {
+  accent-color: var(--ink);
+}
+
+/* ============================================================
+ * 14. Thumb zone — mobile-first action shelf
+ *
+ *   On phones the verdict CTA is duplicated at the bottom of the
+ *   viewport so the thumb can reach it without scrolling back up.
+ *   Hidden on tablet+.
+ * ============================================================ */
+.thumb-zone {
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: var(--s-3) var(--gutter);
+  background: var(--paper);
+  border-top: var(--rule-w) solid var(--rule);
+  display: flex;
+  justify-content: center;
+  z-index: 10;
+}
+.thumb-zone a {
+  font-family: var(--font-text);
+  font-weight: 600;
+  border-bottom: 2px solid var(--accent);
+  color: var(--ink);
+}
+@media (min-width: 768px) {
+  .thumb-zone { display: none; }
+}
+
+/* ============================================================
+ * 15. Print — magazine printable
  * ============================================================ */
 @media print {
-  body { background: #FFFFFF; color: #000; }
-  .topbar, .filters, .hero-cta, .footer { display: none; }
-  .hero, .bug-section, .bug-meta, .runs-table, .bug-card,
-  .board-column { box-shadow: none; border: 1px solid #000; }
-  .chip, .badge, .pill, .tag {
-    background: #FFFFFF !important;
-    color: #000 !important;
-    border: 1px solid #000 !important;
+  :root {
+    --paper: #FFFFFF;
+    --ink:   #000000;
+    --rule:  #888888;
+    --mute:  #555555;
+    --soft:  #F5F5F5;
+    --accent: #000000;
   }
-  .evidence-tile img { height: auto; max-height: 320px; }
-  a { color: #000; text-decoration: underline; }
+  .masthead, .colophon, .filter-bar, .thumb-zone, .verdict-action { display: none; }
+  a { border-bottom: 0; }
+  .bug-list-item { page-break-inside: avoid; }
+  .article-section { page-break-inside: avoid; }
 }
