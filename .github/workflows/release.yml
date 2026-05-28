@@ -16,13 +16,23 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Validate skill metadata
+        run: python3 scripts/validate-skill-metadata.py
+
       - name: Build claude.ai-compatible zip
         run: |
           cd plugins/running-bug-review-board/skills
           zip -r "${GITHUB_WORKSPACE}/running-bug-review-board.zip" running-bug-review-board
 
       - name: Verify zip contents
-        run: unzip -l running-bug-review-board.zip | head -30
+        run: |
+          unzip -l running-bug-review-board.zip
+          python3 - <<'PY'
+          from zipfile import ZipFile
+          with ZipFile("running-bug-review-board.zip") as archive:
+              if "running-bug-review-board/SKILL.md" not in archive.namelist():
+                  raise SystemExit("running-bug-review-board/SKILL.md missing from zip")
+          PY
 
       - name: Create GitHub Release with skill zip
         uses: softprops/action-gh-release@v2
@@ -41,6 +51,6 @@ jobs:
             **claude.ai (Settings > Features > Skills):**
             Download `running-bug-review-board.zip` below and upload it.
 
-            **Cursor / Codex / Droid:** see the [README](https://github.com/RayFernando1337/rayfernando-skills#cursor--codex--droid-and-any-other-filesystem-based-agent) for clone + symlink instructions.
+            **Cursor / Codex / Droid:** see the [README](https://github.com/RayFernando1337/rayfernando-skills#install) for current install instructions.
 
             ---
