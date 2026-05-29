@@ -82,14 +82,10 @@ for the full investigation playbook. The short version:
 4. Read the bug-reports index — open bugs are scenarios you must re-test
    first.
 5. **Detect the project type.** Web app → use
-   [browser-playbook.md](references/browser-playbook.md). Native macOS
-   app → use [computer-use-playbook.md](references/computer-use-playbook.md).
-   iOS / iPadOS app project → use
+   [browser-playbook.md](references/browser-playbook.md). iOS / iPadOS
+   app project → use
    [ios-simulator-playbook.md](references/ios-simulator-playbook.md).
-   Other → no UI playbook activates. Also note whether **Codex Computer
-   Use** is available (macOS only) — it enables a human-fidelity pass on
-   web apps and is the only way to reach a native Mac app. Most VMs (Cursor
-   cloud, CI) won't have it, so never make the pass depend on it.
+   Other → no UI playbook activates.
 6. **Detect the issue tracker** (Linear, GitHub, Jira, Notion, or
    none). Surface every signal found and **ask the user to confirm**
    before writing `qa-config.json`. See
@@ -411,21 +407,16 @@ report marker. See
 
 ## Anti-patterns to avoid
 
+Beyond the **Always** / **Never** lists above, these are the mistakes that
+quietly waste a pass or ship a regression. They earn their own callout
+because the *why* is what makes them stick:
+
 | Don't | Why |
 |-------|-----|
-| Mark scenarios PASS from code inspection | Users don't experience source |
-| Defer P0 bugs to "next phase" | Foundation bugs cascade everywhere |
-| Trust prior PASS marks without re-running on a fresh build | Regressions appear from unrelated work |
-| Run multiple QA agents on one browser tab | Auth providers throttle; sessions bleed |
-| Edit the phase doc to match buggy behavior | Hides the regression — file a bug instead |
-| File a bug without **Steps to reproduce** | Engineering can't act on it |
-| Test only the happy path | The happy path is what engineers tested already |
-| **Run BRB and an auto pass in the same session** | Triage bias contaminates discovery |
-| **Sync bugs to a tracker without filling `qa-config.json`** | Duplicates and lost edits |
-| **Use the iOS playbook to test a web app on Mobile Safari** | Out of scope; the iOS playbook is for iOS app projects only |
-| **Auto-merge heuristic suggestions** | Every dedup needs user confirm |
-| **Auto-import tracker-only bugs** as local markdown | Engineering may have filed them in a context QA shouldn't claim |
-| **Edit the HTML to change bug state** | Markdown is the source of truth; regenerate the HTML |
+| Defer P0 bugs to "next phase" | Foundation bugs cascade everywhere — a broken auth or data path poisons every scenario built on top of it |
+| Trust prior PASS marks without re-running on a fresh build | Unrelated work introduces regressions; yesterday's green is not today's |
+| File a bug without **Steps to reproduce** | Engineering can't act on a report it can't reproduce — it just bounces back |
+| Test only the happy path | The happy path is what the engineers already tested; the bugs live in the edges |
 
 ## When a QA pass reveals work bigger than QA
 
