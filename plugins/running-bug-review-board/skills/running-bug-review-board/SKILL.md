@@ -372,7 +372,8 @@ Adapt paths to whatever the target repo already uses.
 - [references/test-plan.md](references/test-plan.md) — derive a phase manual test plan from spec + phase doc + gate
 - [references/test-accounts.md](references/test-accounts.md) — Clerk / Auth0 / Supabase / custom — and the "ask the user" pattern
 - [references/session-hygiene.md](references/session-hygiene.md) — stale storage, rate limits, persona suffixing
-- [references/browser-playbook.md](references/browser-playbook.md) — cursor-ide-browser, browser-use, Playwright recipes (web apps only)
+- [references/browser-playbook.md](references/browser-playbook.md) — cursor-ide-browser, Chrome DevTools MCP, browser-use, Playwright recipes + how to drive like a human (web apps)
+- [references/computer-use-playbook.md](references/computer-use-playbook.md) — Codex Computer Use for web and native macOS apps (macOS; graceful fallback to a browser driver elsewhere)
 - [references/ios-simulator-playbook.md](references/ios-simulator-playbook.md) — iOS / iPadOS app QA, curated companion-skill ladder (AXe, baguette, XcodeBuildMCP, ios-simulator-skill, ios-build-verify, …)
 - [references/parallel-coordinator.md](references/parallel-coordinator.md) — shard map, write-path-first rule, copy-paste shard prompts
 - [references/sequential-wrapup.md](references/sequential-wrapup.md) — single-agent finish; copy-paste prompt
