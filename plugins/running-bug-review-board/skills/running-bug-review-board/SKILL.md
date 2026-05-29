@@ -340,13 +340,22 @@ the session is in another tool or browser MCP is missing, fall back per
 the ladder in [references/browser-playbook.md](references/browser-playbook.md):
 
 1. cursor-ide-browser MCP (Cursor / Claude Code)
-2. browser-use MCP (provider-agnostic)
-3. Playwright (CLI or MCP)
-4. Driving manually + asking user to paste console errors / screenshots
+2. Chrome DevTools for agents (`chrome-devtools-mcp`) — auto-waits for
+   results and adds DevTools-grade network / console / Lighthouse / a11y
+   inspection; can attach to your real signed-in Chrome so auth flows
+   don't get bot-flagged
+3. browser-use MCP (provider-agnostic)
+4. Playwright (CLI or MCP)
+5. Codex Computer Use (macOS) — human-fidelity pass on the real signed-in
+   app; see [computer-use-playbook.md](references/computer-use-playbook.md)
+6. Driving manually + asking user to paste console errors / screenshots
 
 Whatever tool, the **playbook** is the same: navigate → snapshot → act
 on fresh refs → capture evidence → unlock when done. The reference
-covers each tool's specifics.
+covers each tool's specifics, including how to drive like a human so the
+app doesn't trip on bot detection or timing races. The pass must succeed
+with whatever the environment has — don't depend on Computer Use, which
+most VMs lack.
 
 ## Deliverables per pass
 
@@ -407,16 +416,21 @@ report marker. See
 
 ## Anti-patterns to avoid
 
-Beyond the **Always** / **Never** lists above, these are the mistakes that
-quietly waste a pass or ship a regression. They earn their own callout
-because the *why* is what makes them stick:
-
 | Don't | Why |
 |-------|-----|
-| Defer P0 bugs to "next phase" | Foundation bugs cascade everywhere — a broken auth or data path poisons every scenario built on top of it |
-| Trust prior PASS marks without re-running on a fresh build | Unrelated work introduces regressions; yesterday's green is not today's |
-| File a bug without **Steps to reproduce** | Engineering can't act on a report it can't reproduce — it just bounces back |
-| Test only the happy path | The happy path is what the engineers already tested; the bugs live in the edges |
+| Mark scenarios PASS from code inspection | Users don't experience source |
+| Defer P0 bugs to "next phase" | Foundation bugs cascade everywhere |
+| Trust prior PASS marks without re-running on a fresh build | Regressions appear from unrelated work |
+| Run multiple QA agents on one browser tab | Auth providers throttle; sessions bleed |
+| Edit the phase doc to match buggy behavior | Hides the regression — file a bug instead |
+| File a bug without **Steps to reproduce** | Engineering can't act on it |
+| Test only the happy path | The happy path is what engineers tested already |
+| **Run BRB and an auto pass in the same session** | Triage bias contaminates discovery |
+| **Sync bugs to a tracker without filling `qa-config.json`** | Duplicates and lost edits |
+| **Use the iOS playbook to test a web app on Mobile Safari** | Out of scope; the iOS playbook is for iOS app projects only |
+| **Auto-merge heuristic suggestions** | Every dedup needs user confirm |
+| **Auto-import tracker-only bugs** as local markdown | Engineering may have filed them in a context QA shouldn't claim |
+| **Edit the HTML to change bug state** | Markdown is the source of truth; regenerate the HTML |
 
 ## When a QA pass reveals work bigger than QA
 
