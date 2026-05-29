@@ -20,6 +20,7 @@ plugins/running-bug-review-board/
     │   ├── test-accounts.md
     │   ├── session-hygiene.md
     │   ├── browser-playbook.md
+    │   ├── computer-use-playbook.md
     │   ├── parallel-coordinator.md
     │   ├── sequential-wrapup.md
     │   ├── bug-filing.md
