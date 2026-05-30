@@ -19,7 +19,7 @@ Strong signals that the repo is an iOS / iPadOS app:
 
 | Signal | What it suggests |
 |--------|------------------|
-| `*.xcodeproj` or `*.xcworkspace` at repo root | Xcode project — likely iOS / macOS |
+| `*.xcodeproj` or `*.xcworkspace` at repo root | Xcode project — **shared with macOS**; pair with an iOS-specific marker below (`.iOS(...)`, `platform :ios`, `UIDeviceFamily`, `ios/`) before treating it as iOS |
 | `Package.swift` with `.iOS(...)` platform | SwiftPM iOS package |
 | `Podfile` with `platform :ios, …` | CocoaPods iOS app |
 | `ios/` directory at root with Xcode files inside | RN / Expo / Flutter iOS shell |

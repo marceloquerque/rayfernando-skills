@@ -46,6 +46,15 @@ All notable changes to this collection are documented here. The format follows [
   remaining entry explains a distinct *why* instead of repeating the
   Always / Never lists.
 
+### Fixed
+
+- **Surface detection no longer misclassifies macOS-only Xcode projects as
+  iOS.** Bare `*.xcodeproj` / `*.xcworkspace` are shared between iOS and
+  macOS, so the iOS surface now requires a genuinely iOS-specific marker
+  (`.iOS(...)`, `platform :ios`, `UIDeviceFamily`, `ios/`), the iOS row is
+  matched before macOS, and the iOS-simulator playbook's signal table carries
+  the same caveat. (Cursor Bugbot.)
+
 ### Notes
 
 - The HTML report design is unchanged in this release, so its
