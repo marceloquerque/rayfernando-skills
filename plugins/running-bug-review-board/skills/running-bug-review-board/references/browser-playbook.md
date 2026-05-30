@@ -34,6 +34,25 @@ and deep inspection. Whatever you pick, the run must succeed with what the
 environment actually has — most VMs (Cursor cloud, CI) won't have Computer
 Use, so never make the pass depend on it.
 
+## Configuration (`qa-config.json#platforms.web`)
+
+Record what you discover so a later pass doesn't re-decide it:
+
+```jsonc
+"web": {
+  "deviceModes": { "mobile": "375x812", "tablet": "768x1024", "desktop": "1280x800" },
+  "primary": "mobile",          // mobile | tablet | desktop — the spec's primary target
+  "primarySource": "spec"       // spec | user | inferred | default — how it was decided
+}
+```
+
+- **Test every mode in `deviceModes`**, leading with `primary`. Adjust the
+  width×height values to the app's own breakpoints when the spec names them.
+- **Set `primary` from the product spec.** If the spec is unclear, ask the
+  user (`primarySource: "user"`). If the user isn't available, infer it from
+  the repo's responsive setup and record `primarySource: "inferred"` so the
+  next pass knows to confirm. A scaffolded stub starts at `"default"`.
+
 ## The universal flow
 
 ```

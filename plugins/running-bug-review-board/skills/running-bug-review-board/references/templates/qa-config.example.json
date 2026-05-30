@@ -86,8 +86,18 @@
   "$comment_platforms": "What the repo under QA actually is. Web app -> see references/browser-playbook.md. iOS / iPadOS app -> see references/ios-simulator-playbook.md. Set ios.enabled=true ONLY when the repo IS an iOS app project (presence of *.xcodeproj, Package.swift with .iOS, Podfile with platform :ios, ios/ directory, etc.). The iOS path is for native iOS app QA, NOT for testing a web app on Mobile Safari.",
   "platforms": {
     "web": {
-      "primaryViewport": "375x812",
-      "desktopViewport": "1440x900"
+      "$comment": "Web app QA. See references/browser-playbook.md. The skill tests all three device modes; discovery records the primary here so it is not re-decided each pass.",
+      "enabled": true,
+      "$comment_deviceModes": "Modes to test, in order. Reference sizes; adjust WIDTHxHEIGHT to the app own breakpoints.",
+      "deviceModes": {
+        "mobile": "375x812",
+        "tablet": "768x1024",
+        "desktop": "1280x800"
+      },
+      "$comment_primary": "mobile|tablet|desktop - the spec primary target, weighted most heavily.",
+      "primary": "mobile",
+      "$comment_primarySource": "spec|user|inferred|default - how primary was decided, so a later pass knows whether to revisit it.",
+      "primarySource": "spec"
     },
     "ios": {
       "enabled": false,

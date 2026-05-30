@@ -34,7 +34,8 @@ After reading, you should be able to answer:
 - **Which device modes, and which is primary?** We test **mobile, tablet,
   and desktop**; the spec's primary target leads. If it's unclear, ask the
   user; if the user isn't available, infer the primary from the repo and
-  note the assumption.
+  note the assumption. Record the result in `qa-config.json#platforms.web`
+  (`deviceModes`, `primary`, `primarySource`) so later passes don't re-ask.
 - **What auth provider, payment provider, data backend?** (affects test
   account playbook and DB verification path)
 - **What are the role permissions?** (admin / member / co-admin / etc.)

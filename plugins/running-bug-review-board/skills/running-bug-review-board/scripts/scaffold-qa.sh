@@ -329,8 +329,9 @@ write_if_missing "$QA_DIR/qa-config.json" <<'CONFEOF'
   },
   "platforms": {
     "web": {
-      "primaryViewport": "375x812",
-      "desktopViewport": "1440x900"
+      "deviceModes": { "mobile": "375x812", "tablet": "768x1024", "desktop": "1280x800" },
+      "primary": "mobile",
+      "primarySource": "default"
     },
     "ios": {
       "$comment": "Set enabled=true ONLY when the repo IS an iOS / iPadOS app project (presence of *.xcodeproj, Package.swift with .iOS, Podfile with platform :ios, ios/ directory, etc.). The iOS path is for native iOS app QA, NOT for testing a web app on Mobile Safari.",

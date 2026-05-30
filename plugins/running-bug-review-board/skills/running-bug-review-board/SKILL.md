@@ -261,8 +261,10 @@ If a different layout already exists in the repo (e.g. `tests/manual/`,
   product spec; if the spec is unclear, ask the user which mode matters
   most; if the user isn't available, infer the most likely primary from
   what you discovered in the repo (responsive CSS / breakpoints, framework
-  defaults, marketing copy) and note the assumption. For iOS apps, the
-  device matrix comes from `qa-config.json#platforms.ios.devices`.
+  defaults, marketing copy) and note the assumption. Record the modes and
+  the chosen primary in `qa-config.json#platforms.web` so later passes
+  don't re-litigate it. For iOS apps, the device matrix comes from
+  `qa-config.json#platforms.ios.devices`.
 - **One browser tab per agent.** Parallel agents on a shared tab cause
   auth-provider rate limits and stale sessions.
 - **Capture evidence.** Snapshot or screenshot at the moment of failure,
