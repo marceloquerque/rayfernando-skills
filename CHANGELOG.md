@@ -4,6 +4,8 @@ All notable changes to this collection are documented here. The format follows [
 
 ## [Unreleased]
 
+## [0.6.0] — 2026-06-17
+
 ### Added
 
 - **`bootstrap-ios` — a router/loader meta-skill for Apple-platform app
@@ -21,6 +23,8 @@ All notable changes to this collection are documented here. The format follows [
 - **Marketplace catalog updated.** `bootstrap-ios` is registered in
   `.claude-plugin/marketplace.json`, the collection metadata version is bumped
   to **0.6.0**, and the README now documents the new install path.
+
+[0.6.0]: https://github.com/RayFernando1337/rayfernando-skills/releases/tag/v0.6.0
 
 ## [0.5.0] — 2026-06-15
 
