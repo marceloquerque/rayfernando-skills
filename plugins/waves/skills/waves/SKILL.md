@@ -1,15 +1,33 @@
 ---
-name: parallel-orchestrate
-description: Decompose a large, multi-part goal into independent slices and run them as parallel Cursor subagents via the Task tool (Multitask Mode), then merge their structured handoffs into one deliverable. Use for big research, analysis, audit, or codebase/data-exploration jobs where a single linear pass would be slow — e.g. "analyze all my messages and find patterns", "research stacks A, B, and C and build a roadmap", "audit this whole repo". The orchestrator plans and synthesizes; isolated workers do the parallel heavy lifting. Read also when the user asks to fan out, parallelize, spin up multiple agents, or orchestrate subagents.
+name: waves
+description: WAVES — Workers · Aggregate · Verify · Extend — wave-based orchestration for Cursor. Decompose a big goal into independent slices, fan them out to isolated parallel subagents via the Task tool (Multitask Mode) as a bounded "wave", verify each structured handoff, then synthesize, and extend into another wave only when warranted. Invoke explicitly with /waves; bounded by design to avoid runaway token loops. For big research, analysis, audits, and codebase or data exploration where one linear pass is slow. Formerly parallel-orchestrate; also fan out, parallelize, orchestrate subagents, multi-agent.
+disable-model-invocation: true
 ---
 
-# Parallel Orchestrate (local subagents)
+# WAVES — Workers · Aggregate · Verify · Extend (Cursor)
 
-Run an orchestrator-worker pattern inside one local Cursor session. You are the
-**orchestrator**: you discover, decompose the goal into independent slices, fan
-them out to parallel **workers** (the `Task` tool, run in the background =
-"Multitask Mode"), read each worker's structured **handoff**, and synthesize one
-deliverable. Workers are isolated and return exactly one handoff.
+Run **wave-based orchestration** inside one local Cursor session. A **wave** is a
+bounded round of isolated agents working in parallel, then a round that verifies
+what came back, then a deliberate decision to build on it — not an open-ended
+loop. You are the **orchestrator**: you discover, decompose the goal into
+independent slices, fan them out to parallel **workers** (the `Task` tool, run in
+the background = "Multitask Mode"), read each worker's structured **handoff**,
+verify it, and synthesize one deliverable. Workers are isolated and return
+exactly one handoff.
+
+**The shape of every wave — WAVE:**
+
+- **W — Workers.** Fan out isolated workers across disjoint slices (the bounded
+  parallel round).
+- **A — Aggregate.** Wait for all of them and merge their structured handoffs at
+  the synthesize barrier.
+- **V — Verify.** The moat: check the evidence behind each handoff before you
+  trust it.
+- **E — Extend.** Decide — deliberately — whether to launch another wave, or stop.
+
+A loop doesn't know when to stop; a wave does, because verification is the stop
+function. (Invoked explicitly with `/waves`: a run spawns more agents than usual,
+so it's opt-in, not auto-triggered.)
 
 This is the local, zero-setup adaptation of the Cursor team's `orchestrate`
 plugin (which spawns *cloud* agents over the Cursor SDK). Same principles —
@@ -85,6 +103,19 @@ wrapped in noise, the orchestrator must stage clean inputs **before** fanning ou
 In practice this serial prep is often the *largest* phase; the parallel fan-out is
 fast once inputs are clean.
 
+### Step 0.7 — Triage: classify each slice (worker type + verification tier)
+
+Before fanning out, classify each slice on **two axes** — this is the
+classify-and-act pattern, routing the right work to the right handler:
+
+- **Worker type** — read-only (`explore`) / web-research (`generalPurpose`) /
+  shell / competing-attempt (`best-of-n-runner`) / specialized review (`bugbot`,
+  `security-review`). (See the table under "Choosing `subagent_type`".)
+- **Verification tier** — how much checking the slice's stakes justify:
+  `auto-accept` (low-stakes, corroborated) → `single verifier` (medium) →
+  `multi-model panel` (high-stakes) → `debate` (contested, no ground truth).
+  Spend the verification budget where a wrong claim is expensive, not uniformly.
+
 ### Step 1 — Decompose into independent slices
 
 Split along whichever axis makes slices independent:
@@ -141,6 +172,35 @@ Then write any code/files yourself, or spawn a dedicated implementation wave
 re-run/`curl`/validate served artifacts, regression-check sibling routes, and
 re-read the critical files you wrote (see `references/verification.md` §6).
 
+## Bounded waves — size, caps, and when to stop
+
+A wave is bounded on purpose. "Loop-until-done" (spawn until a stop condition) is
+a real pattern, but unbounded it burns tokens for little gain: candidate
+*generation* is cheap, but *selection* plateaus, and extra rounds are
+non-monotonic — more iterations can *lower* quality, not just cost. Bounded waves
+keep the exploration and drop the runaway.
+
+- **Width: N = 3–8 workers per wave.** Size N so you can *fully verify all N*. Go
+  wider only when a cheap automatic check (tests, schema, exec) gates the results.
+- **Depth: ≤ 2–3 waves, capped up front.** Stop when a wave surfaces nothing new
+  *and* its outputs are near-duplicates of the last (stagnation), or when quality
+  dropped versus the prior wave.
+- **Budget: ~60% generation / 40% verification.** Selection is the scarce
+  resource; spend there.
+- **Match width to difficulty:** easy → 1 + a light refine; medium → 3–5;
+  hard/open-ended → 5–8 for approach diversity; hardest/novel → don't loop,
+  escalate the model.
+- **Anti-poisoning handoff:** carry only a *distilled, verified* handoff (the
+  winner + a short critique) into the next wave — never raw transcripts or losing
+  candidates. Long, irrelevant context measurably degrades reasoning.
+
+**Loop-until-done is justified only when ALL hold:** a cheap, reliable
+~ground-truth verifier exists; the signal is crisp and actionable (a failing
+test, not "try harder"); each iteration shows measurable progress; the work is
+easy–medium difficulty; and it stays hard-capped. That fits code-with-tests and
+exec-feedback pipelines; it misfits open-ended research/writing/design (verify in
+bounded waves instead).
+
 ## Verification
 
 The orchestrator's highest-leverage job. You can't make a worker smarter at
@@ -154,18 +214,23 @@ multi-wave run one unchecked bad handoff compounds into the synthesis.
   COMPLETELY", live sources, flag-unverified. (Don't rely on freeform
   "double-check yourself"; give an oracle or a separate verifier.)
 - **Dedicated verifier worker** for high-stakes / contested / citation-heavy
-  claims — give it the claim + sources but **not** the generator's reasoning.
-  For the highest-stakes calls, a multi-model panel + synthesis checks harder
-  still (see "Multi-model fan-out").
+  claims — give it the claim + sources but **not** the generator's reasoning, and
+  have it reason against a rubric/reference before its verdict (reference-guided +
+  CoT is the cheapest reliable judge upgrade). Never show the generator the
+  verifier's rubric (anti-gaming). For the highest-stakes calls, a multi-model
+  panel + synthesis checks harder still (see "Multi-model fan-out").
 - **Measure & cross-check** — re-run the oracle, recount from source, require ≥2
-  independent sources.
+  independent sources that actually *entail* the claim (a citation being present
+  ≠ the claim being supported).
 - **Escalate** low-confidence / conflicting findings (re-task with a tighter
   prompt → dedicated verifier → ask the user, who may choose a stronger model)
   instead of folding them in.
 
 Strongest on objective, checkable work (counts, code, facts-with-sources); on
-taste/judgment, verify the sub-claims, don't fake a grade. Full playbook:
-`references/verification.md`.
+taste/judgment, verify the sub-claims, don't fake a grade. Keep claims honest:
+isolation **reduces error propagation / path dependency**, but don't claim a
+quantified "prevents poisoning" — there's no isolation-only ablation. Full
+playbook: `references/verification.md`.
 
 ## Choosing `subagent_type`
 
@@ -216,6 +281,23 @@ Caveat: a panel multiplies token cost (you pay every worker) and adds latency �
 reserve it for high-stakes slices, not routine ones. The adversarial multi-model
 review (a panel of reviewer models + one synthesized verdict) is this same
 pattern applied to code review.
+
+## Generate-and-filter & tournaments
+
+For open-ended ideation or "produce the single best X", generate several
+candidates and **filter** — don't trust one attempt:
+
+- **Cheap filter first.** Gate candidates through a near-ground-truth check
+  (tests, schema/exec, dedup/clustering) *before* spending judge tokens —
+  generation is cheap, judging is not. (AlphaCode's shape: generate many → filter
+  ~99% by tests → cluster → submit a few.)
+- **Selection ladder, not all-pairs.** Dedup/cluster → shortlist → pairwise-judge
+  only among finalists. A naive O(N²) tournament spends most of its tokens
+  comparing also-rans.
+- **Use `best-of-n-runner`** for competing *implementation* attempts (each in its
+  own git worktree), then inspect/test/merge the winner yourself.
+- For high-stakes *judgment* calls, the multi-model panel (above) is the
+  generate-and-filter of verification.
 
 ## Worker prompt = the contract
 
@@ -273,6 +355,7 @@ is invoked explicitly (e.g. `/orchestrate <goal>`).
 ## Checklist
 
 - [ ] Discovered the problem shape before decomposing.
+- [ ] Triaged each slice (worker type + verification tier).
 - [ ] Slices are independent (disjoint data/areas/paths).
 - [ ] Each worker prompt is fully self-contained (no reliance on chat history).
 - [ ] All `Task` calls sent in one message, `run_in_background: true`.
@@ -280,6 +363,7 @@ is invoked explicitly (e.g. `/orchestrate <goal>`).
 - [ ] No two parallel workers write the same paths.
 - [ ] Verified coverage before spawning (counts/bounds/partition-sum).
 - [ ] Read every handoff; spawned follow-ups for open questions.
+- [ ] Wave bounded (width ≈3–8, ≤2–3 waves); carried only distilled handoffs forward.
 - [ ] Verified each handoff's evidence (not just its `Status`); escalated
       low-confidence / conflicting / uncited findings before synthesizing.
 - [ ] Verified the final deliverable (re-ran/validated; re-read critical writes).

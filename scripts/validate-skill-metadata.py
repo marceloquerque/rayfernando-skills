@@ -31,6 +31,7 @@ ALLOWED_FRONTMATTER_KEYS = {
     "license",
     "allowed-tools",
     "metadata",
+    "disable-model-invocation",
 }
 EXCLUDED_DIRS = {
     ".git",

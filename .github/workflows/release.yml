@@ -58,12 +58,12 @@ jobs:
             ```
             /plugin marketplace add RayFernando1337/rayfernando-skills@${{ github.ref_name }}
             /plugin install running-bug-review-board@rayfernando-skills
-            /plugin install parallel-orchestrate@rayfernando-skills
-            /plugin install parallel-orchestrate-codex@rayfernando-skills
+            /plugin install waves@rayfernando-skills
+            /plugin install waves-codex@rayfernando-skills
             ```
 
             **claude.ai (Settings > Features > Skills):**
-            Download the skill zip you want below (`running-bug-review-board.zip`, `parallel-orchestrate.zip`, or `parallel-orchestrate-codex.zip`) and upload it.
+            Download the skill zip you want below (`running-bug-review-board.zip`, `waves.zip`, or `waves-codex.zip`) and upload it.
 
             **Cursor / Codex / Droid:** see the [README](https://github.com/RayFernando1337/rayfernando-skills#install) for current install instructions.
 

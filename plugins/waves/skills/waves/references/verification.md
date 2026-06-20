@@ -72,6 +72,22 @@ reasoning** (so it can't inherit the same mistake). It returns, per claim:
 settles it. (This is the CitationAgent pattern: re-attribute every claim to a
 source after the fact.) See the Verifier worker template in `handoff-format.md`.
 
+**Make the verifier's job robust:**
+
+- **Reference-guided + chain-of-thought.** Give it a rubric or reference and have
+  it reason step-by-step *before* the verdict — removing the reference is the
+  single biggest judge-accuracy drop, and CoT-before-verdict is the mitigation
+  that helps broadly.
+- **Anti-gaming.** Never show the generator the verifier's rubric, and prefer a
+  verifier that can re-derive/execute over one that re-reads prose (verifiers get
+  gamed; over-optimizing a weak proxy verifier makes true quality fall — Goodhart).
+- **Different model (optional, strongest).** A same-model verifier can still
+  self-prefer *even with an isolated context* — models recognize and favor their
+  own output. For the highest-stakes calls, ask the user for a *different model
+  family* as the verifier. (Planned as a Cursor default in a later version pending
+  testing; for now it's an opt-in escalation, consistent with the user-prompted
+  multi-model rule — don't guess model slugs.)
+
 Budget: don't verify everything equally. Inline self-checks are free; reserve
 dedicated verifier workers for the ~20% of findings the deliverable hinges on.
 
@@ -82,8 +98,10 @@ dedicated verifier workers for the ~20% of findings the deliverable hinges on.
   *run it* and report `command → output`.
 - **Recount from source.** For "N items / all X do Y", recompute N from the
   staged data, not from the summary.
-- **≥2 independent sources** to mark a claim `supported`; one source =
-  `single-sourced` (flag). For citations, ≥3 independent agreement ≈ 95% reliable.
+- **≥2 independent sources that ENTAIL the claim** to mark it `supported` — check
+  entailment, don't just count citations (a citation being present ≠ the claim
+  being supported). One source = `single-sourced` (flag). For citations, ≥3
+  independent agreement ≈ 95% reliable.
 - **Decompose then verify (SAFE).** Split a long-form claim into atomic facts;
   check each against a fresh source rather than judging the paragraph whole.
 - **Panel cross-check.** Running the same high-stakes/contested claim across
@@ -128,3 +146,6 @@ Before declaring done (Fable's habit on served artifacts):
 - Self-Consistency, arXiv 2203.11171 — https://arxiv.org/pdf/2203.11171
 - SAFE (decompose → search → rate facts), arXiv 2403.18802 — https://arxiv.org/abs/2403.18802
 - Self-correction needs external feedback, arXiv 2310.01798 — https://arxiv.org/abs/2310.01798
+- Self-preference & self-recognition in LLM judges, arXiv 2404.13076 — https://arxiv.org/abs/2404.13076
+- Panel of LLM judges (PoLL: cheaper + less biased than one big judge), arXiv 2404.18796 — https://arxiv.org/abs/2404.18796
+- Cited ≠ supported (FActScore 2305.14251; ALCE entailment-scored citations 2305.14627)

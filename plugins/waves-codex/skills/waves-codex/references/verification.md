@@ -91,6 +91,19 @@ Give the verifier:
 Do not give it the generator's reasoning. That makes it less likely to inherit
 the same mistake.
 
+Make the verifier's job robust:
+
+- Reference-guided + chain-of-thought: give it a rubric or reference and have it
+  reason step-by-step before the verdict. Removing the reference is the biggest
+  judge-accuracy drop; CoT-before-verdict helps broadly.
+- Anti-gaming: never show the generator the verifier's rubric, and prefer a
+  verifier that can re-derive/execute over one that re-reads prose (verifiers get
+  gamed; over-optimizing a weak proxy verifier makes true quality fall).
+- Different model (optional, strongest): a same-model verifier can self-prefer
+  even with an isolated context. For the highest-stakes calls, ask the user for a
+  different model family as the verifier. (Planned as a default in a later version
+  pending testing; for now an opt-in escalation - don't guess model slugs.)
+
 The verifier returns:
 
 - `supported`
@@ -109,8 +122,9 @@ Prefer direct oracles over prose review:
 - Run tests, type checks, linters, validators, parsers, or smoke scripts.
 - Recount from source data rather than trusting a summary.
 - Re-run queries or regexes for headline numbers.
-- Use at least two independent sources before treating a factual claim as
-  verified.
+- Use at least two independent sources that ENTAIL the claim before treating it
+  as verified - check entailment, don't just count citations (a citation being
+  present is not the claim being supported).
 - Split long claims into atomic facts and verify each separately.
 
 For docs/current behavior, use primary sources first. For Codex/OpenAI details,

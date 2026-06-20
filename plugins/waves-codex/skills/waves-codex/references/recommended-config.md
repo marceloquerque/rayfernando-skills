@@ -1,6 +1,6 @@
 # Recommended Codex Configuration
 
-Use this as a starting point for the `parallel-orchestrate-codex` workflow. Put shared
+Use this as a starting point for the `waves-codex` workflow. Put shared
 defaults in `~/.codex/config.toml` or repo-specific settings in
 `.codex/config.toml` for trusted projects.
 

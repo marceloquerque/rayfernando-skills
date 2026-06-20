@@ -200,6 +200,28 @@ Risky patterns:
 - Multiple workers changing shared contracts without a manager-owned design.
 - Workers editing before discovery converges.
 
+## Wave Shapes
+
+A wave is not one move - pick the shape from how much you know about the problem.
+
+- Exploratory wave (you don't know the shape yet): when the space is unmapped
+  (QA, an unfamiliar repo, "what's wrong here?"), send a broad first wave - many
+  workers probing different surfaces/flows at once. Its job is to find the edges,
+  not finish. Verify what's real; now you know the shape.
+- Shaping wave (narrow as you learn): the next wave is more focused - kill dead
+  ends, double down on what had teeth. Each wave spends the previous wave's
+  findings instead of re-guessing.
+- Artifact-then-bigger-wave: a small wave writes an architecture doc; verify it;
+  then a much bigger wave builds against the verified spec. The small wave
+  de-risks the big one; the artifact keeps the big wave from poisoning itself.
+- Divergent research wave: send workers in genuinely different directions on the
+  same question, let them return independently, then verify across them. High
+  token value with no cross-contamination - separate contexts mean the directions
+  don't poison each other.
+
+Human-in-the-loop is optional by design: read the synthesis and shape the next
+wave yourself, or let the verifier gate it automatically.
+
 ## Anti-Patterns
 
 - Fan out before discovering the shape of the task.

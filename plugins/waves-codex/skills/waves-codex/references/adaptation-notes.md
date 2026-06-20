@@ -50,7 +50,7 @@ official docs describe it as experimental.
 | `shell` | Usually built-in `worker` with shell access inherited from the session, or a custom shell-heavy worker. |
 | `best-of-n-runner` | Codex app Worktree mode, or plain `git worktree` plus one `codex exec` run per attempt. There is no exact local built-in named `best-of-n-runner` in the verified Codex docs. |
 | `TodoWrite` | Codex `update_plan`. |
-| Frontmatter `disable-model-invocation: true` | Dropped. Codex discovers skills by metadata and only spawns subagents when explicitly asked. Optional invocation policy can live in `agents/openai.yaml`. |
+| Frontmatter `disable-model-invocation: true` | Included for the cross-vendor opt-in default (Cursor and Claude Code read it to require explicit `/waves-codex` invocation, since a run spawns more agents than usual). Codex itself discovers skills by metadata and only spawns subagents when explicitly asked, so the field is inert there but harmless. |
 | `~/.cursor/skills/<name>/` | Current Codex docs document repo `.agents/skills`, user `$HOME/.agents/skills`, admin `/etc/codex/skills`, and system bundled skills. Ray's local memory shows `~/.codex/skills` may exist as a symlink/plugin compatibility path, but `$HOME/.agents/skills` is the better global authoring target. |
 | "End your turn and wait for completion notifications" | Ask Codex to spawn, wait for all requested workers, and consolidate. In direct tool mode, continue useful manager-side work and wait only when blocked; do not busy-poll. |
 | "Stage remote data because read-only workers are offline" | Reconciled. Codex workers may have full tool/MCP/network access depending on session config, so staging is an optimization and safety move, not always a requirement. |

@@ -1,6 +1,6 @@
 # rayfernando-skills
 
-A collection of installable **Skill files** for AI coding agents. It started with the one most teams are missing — real-user QA — and now also ships `parallel-orchestrate`, an orchestrator-worker skill that fans one big task out to a team of agents (Cursor and Codex variants), plus `bootstrap-ios`, a single entry point for loading Ray's iOS/macOS agent skill stack.
+A collection of installable **Skill files** for AI coding agents. It started with the one most teams are missing — real-user QA — and now also ships `waves`, an orchestrator-worker skill that fans one big task out to a team of agents (Cursor and Codex variants), plus `bootstrap-ios`, a single entry point for loading Ray's iOS/macOS agent skill stack.
 
 [![Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 
@@ -9,12 +9,12 @@ A collection of installable **Skill files** for AI coding agents. It started wit
 | Skill | What it does | Primary install (Claude Code) |
 |---|---|---|
 | **[running-bug-review-board](#running-bug-review-board--real-user-qa)** · QA | Point an AI agent at your *live* app; it QAs like a real user, files P0/P1/P2 bug reports, and returns a **YES/NO** ship verdict plus a shareable HTML report. | `/plugin install running-bug-review-board@rayfernando-skills` |
-| **[parallel-orchestrate](#parallel-orchestrate--fan-out-to-parallel-agents)** · Cursor + Codex | Fan one big research, analysis, or audit job out to parallel subagents, verify each structured handoff, and synthesize one deliverable. | `/plugin install parallel-orchestrate@rayfernando-skills` |
+| **[waves](#waves--fan-out-to-parallel-agents)** · Cursor + Codex | Fan one big research, analysis, or audit job out to parallel subagents, verify each structured handoff, and synthesize one deliverable. | `/plugin install waves@rayfernando-skills` |
 | **[bootstrap-ios](#bootstrap-ios--load-the-ios-agent-stack)** · iOS/macOS | One entry point for Swift, SwiftUI, SwiftData/Core Data, Swift Testing, Xcode build/test/simulator, XcodeBuildMCP, and curated community iOS skills. | `/plugin install bootstrap-ios@rayfernando-skills` |
 
 Each skill installs into Claude Code, Cursor, Codex, and ~50 other agents — full per-agent steps are in the sections below.
 
-**Jump to:** [running-bug-review-board (QA)](#running-bug-review-board--real-user-qa) · [parallel-orchestrate](#parallel-orchestrate--fan-out-to-parallel-agents) · [bootstrap-ios](#bootstrap-ios--load-the-ios-agent-stack) · [Repo structure](#repo-structure) · [Contributing](#contributing)
+**Jump to:** [running-bug-review-board (QA)](#running-bug-review-board--real-user-qa) · [waves](#waves--fan-out-to-parallel-agents) · [bootstrap-ios](#bootstrap-ios--load-the-ios-agent-stack) · [Repo structure](#repo-structure) · [Contributing](#contributing)
 
 ---
 
@@ -203,29 +203,29 @@ Each Skill file uses **progressive disclosure**: a lean `SKILL.md` entry point, 
 
 ---
 
-## parallel-orchestrate — fan out to parallel agents
+## waves — fan out to parallel agents
 
-Turn one big task into a team of agents. `parallel-orchestrate` is an orchestrator-worker skill: the lead agent discovers the shape of the work, splits it into independent slices, fans them out to parallel workers, verifies each structured handoff, and synthesizes one deliverable. It ships in two tool-tuned variants with different prompts:
+Turn one big task into a team of agents. **WAVE = Workers · Aggregate · Verify · Extend**: the lead agent discovers the shape of the work, splits it into independent slices, fans them out to parallel **W**orkers, **A**ggregates their structured handoffs, **V**erifies each one (the moat), and **E**xtends into another wave only when warranted — a bounded round, not an open-ended loop. It ships in two tool-tuned variants with different prompts:
 
-- **[`parallel-orchestrate`](plugins/parallel-orchestrate/skills/parallel-orchestrate/SKILL.md)** — for **Cursor**, built around the `Task` tool and Multitask Mode (local subagents on a shared filesystem).
-- **[`parallel-orchestrate-codex`](plugins/parallel-orchestrate-codex/skills/parallel-orchestrate-codex/SKILL.md)** — for **Codex**, built around Codex subagents, `spawn_agents_on_csv`, `config.toml` limits, and `codex exec` fleets.
+- **[`waves`](plugins/waves/skills/waves/SKILL.md)** — for **Cursor**, built around the `Task` tool and Multitask Mode (local subagents on a shared filesystem).
+- **[`waves-codex`](plugins/waves-codex/skills/waves-codex/SKILL.md)** — for **Codex**, built around Codex subagents, `spawn_agents_on_csv`, `config.toml` limits, and `codex exec` fleets.
 
-Reach for it when a single linear pass would be slow and the work splits into independent slices — big research, analysis, audits, or codebase/data exploration. It activates on phrases like "fan out", "spin up multiple agents", "parallelize this", "analyze all my X and find patterns", "research A/B/C and build a roadmap", or "audit this repo".
+Reach for it when a single linear pass would be slow and the work splits into independent slices — big research, analysis, audits, or codebase/data exploration. Because a run spawns more agents than usual, it's **opt-in: invoke it explicitly with `/waves` (or `/waves-codex`)** rather than relying on auto-trigger (`disable-model-invocation: true`). Good prompts to pair with it: "fan out", "spin up multiple agents", "parallelize this", "analyze all my X and find patterns", "research A/B/C and build a roadmap", or "audit this repo".
 
 **Cursor:**
 
 ```bash
-npx skills add https://github.com/RayFernando1337/rayfernando-skills/tree/main/plugins/parallel-orchestrate/skills/parallel-orchestrate -a cursor
+npx skills add https://github.com/RayFernando1337/rayfernando-skills/tree/main/plugins/waves/skills/waves -a cursor
 ```
 
 **Codex:**
 
 ```bash
 codex plugin marketplace add RayFernando1337/rayfernando-skills
-codex plugin add parallel-orchestrate-codex@rayfernando-skills
+codex plugin add waves-codex@rayfernando-skills
 ```
 
-**Claude Code:** `/plugin install parallel-orchestrate@rayfernando-skills` (Cursor-tuned) or `/plugin install parallel-orchestrate-codex@rayfernando-skills` (Codex-tuned).
+**Claude Code:** `/plugin install waves@rayfernando-skills` (Cursor-tuned) or `/plugin install waves-codex@rayfernando-skills` (Codex-tuned).
 
 **Cross-vendor (`npx skills add`):** point the installer at either skill folder and pass `-a <agent>` (e.g. `-a codex`, `-a claude-code`, `--all`).
 
@@ -310,18 +310,18 @@ rayfernando-skills/
 │   │               ├── scaffold-qa.sh           # create the QA folder layout
 │   │               ├── bugs-needing-sync.sh     # list bugs missing a tracker ID
 │   │               └── bugs-needing-pull.sh     # list bugs with stale tracker sync
-│   ├── parallel-orchestrate/                     # Cursor variant (Task tool + Multitask Mode)
+│   ├── waves/                     # Cursor variant (Task tool + Multitask Mode)
 │   │   ├── .claude-plugin/
 │   │   │   └── plugin.json
 │   │   └── skills/
-│   │       └── parallel-orchestrate/
+│   │       └── waves/
 │   │           ├── SKILL.md
 │   │           └── references/           # examples, handoff-format, verification
-│   ├── parallel-orchestrate-codex/               # Codex variant (subagents + config.toml)
+│   ├── waves-codex/               # Codex variant (subagents + config.toml)
 │   │   ├── .claude-plugin/
 │   │   │   └── plugin.json
 │   │   └── skills/
-│   │       └── parallel-orchestrate-codex/
+│   │       └── waves-codex/
 │   │           ├── SKILL.md
 │   │           ├── agents/openai.yaml
 │   │           └── references/           # adaptation-notes, examples, handoff-format, recommended-config, verification
@@ -360,7 +360,7 @@ Ray spent 12 years at Apple working across many parts of the system. The lesson 
 
 ## Changelog
 
-This project follows [Semantic Versioning](https://semver.org/) and [Keep a Changelog](https://keepachangelog.com/). Recent highlights: a new `parallel-orchestrate` skill (Cursor and Codex variants) for parallel agent fan-out; plus a Computer Use + Chrome DevTools driver playbook, an editorial HTML report (Zite + Dieter Rams), and confirmed two-way issue-tracker sync. Full history in [`CHANGELOG.md`](CHANGELOG.md).
+This project follows [Semantic Versioning](https://semver.org/) and [Keep a Changelog](https://keepachangelog.com/). Recent highlights: a new `waves` skill (Cursor and Codex variants) for parallel agent fan-out; plus a Computer Use + Chrome DevTools driver playbook, an editorial HTML report (Zite + Dieter Rams), and confirmed two-way issue-tracker sync. Full history in [`CHANGELOG.md`](CHANGELOG.md).
 
 ---
 

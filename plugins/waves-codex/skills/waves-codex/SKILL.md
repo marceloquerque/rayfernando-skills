@@ -1,15 +1,25 @@
 ---
-name: parallel-orchestrate-codex
-description: Decompose a large, multi-part goal into independent slices, verify coverage before fan-out, spawn Codex subagents in parallel, collect evidence-backed handoffs, verify important claims, synthesize one deliverable, and launch follow-up waves as needed. Use when the user asks to fan out, parallelize, spin up multiple agents, delegate to subagents, orchestrate workers, analyze large datasets, run multi-stream research, audit a repo, or split disjoint implementation work.
+name: waves-codex
+description: WAVES - Workers, Aggregate, Verify, Extend - wave-based orchestration for Codex. Decompose a big goal into independent slices, verify coverage, spawn Codex subagents in parallel as a bounded wave, collect evidence-backed handoffs, verify important claims, synthesize one deliverable, and extend into another wave only when warranted. Bounded by design to avoid runaway token loops; invoke deliberately. Formerly parallel-orchestrate-codex; also fan out, parallelize, spin up multiple agents, orchestrate workers, multi-stream research, audit a repo, split disjoint implementation work.
+disable-model-invocation: true
 ---
 
-# Parallel Orchestrate (Codex subagents)
+# WAVES — Workers · Aggregate · Verify · Extend (Codex)
 
-Use this skill when a task is too broad for one clean linear pass but can be
-split into independent slices. You are the manager: discover the problem shape,
-stage and verify coverage, decompose it, spawn bounded Codex workers, collect one
-structured handoff from each worker, verify important claims, and synthesize the
-final deliverable.
+Run **wave-based orchestration** with Codex subagents. A **wave** is a bounded
+round of isolated workers in parallel, then a round that verifies what came back,
+then a deliberate decision to build on it — not an open-ended loop. Use this skill
+when a task is too broad for one clean linear pass but can be split into
+independent slices. You are the manager: discover the problem shape, stage and
+verify coverage, decompose it, spawn bounded Codex workers, collect one structured
+handoff from each worker, verify important claims, and synthesize the final
+deliverable.
+
+**The shape of every wave — WAVE:** Workers fan out across disjoint slices ->
+Aggregate their handoffs -> Verify the evidence (the moat) -> Extend into another
+wave only when warranted. A loop doesn't know when to stop; a wave does, because
+verification is the stop function. (Invoke deliberately - a run spawns more agents
+than usual.)
 
 Current Codex docs checked on 2026-06-14: Codex subagents are enabled by default
 in current releases, built-in roles include `default`, `worker`, and `explorer`,
@@ -65,6 +75,31 @@ Read these references when using the skill:
    worktrees, but write conflicts are still a coordination problem.
 7. Keep moving until terminal. Handoffs can reveal second-wave tasks; spawn them
    when they materially improve the final deliverable.
+
+## Bounded Waves - Size, Caps, and When to Stop
+
+A wave is bounded on purpose. Unbounded "loop-until-done" burns tokens for little
+gain: candidate generation is cheap, selection plateaus, and extra rounds are
+non-monotonic (more iterations can lower quality, not just cost). Keep the
+exploration, drop the runaway.
+
+- Width: 3-8 workers per wave (and within `agents.max_threads`); size it so you
+  can fully verify all of them. Go wider only with a cheap automatic check
+  (tests, `codex exec --output-schema`, schema/exec) gating results.
+- Depth: <= 2-3 waves, capped up front. Stop on stagnation (nothing new + outputs
+  near-duplicate the last wave) or a quality drop versus the prior wave.
+- Budget ~60% generation / 40% verification; selection is the scarce resource.
+- Match width to difficulty: easy -> 1 + light refine; medium -> 3-5;
+  hard/open-ended -> 5-8 for diversity; hardest/novel -> escalate reasoning/model,
+  don't loop.
+- Anti-poisoning: carry only a distilled, verified handoff (winner + short
+  critique) into the next wave, never raw transcripts or losing candidates.
+
+Loop-until-done is justified only when ALL hold: a cheap reliable ~ground-truth
+verifier exists; the signal is crisp/actionable (a failing test, not "try
+harder"); each iteration shows measurable progress; easy-medium difficulty; still
+hard-capped. Fits code-with-tests/exec-feedback; misfits open-ended
+research/writing/design.
 
 ## The Loop
 
@@ -127,6 +162,12 @@ cheaply.
 
 Respect `agents.max_threads`. Current Codex docs say it defaults to `6` when
 unset. If you need more slices than available threads, batch them into waves.
+
+Triage each slice on two axes (classify-and-act): the **Codex role** (table in
+Step 2) and a **verification tier** - `auto-accept` (low-stakes, corroborated) ->
+`single verifier` -> `multi-model/multi-pass panel` (high-stakes) -> `debate`
+(contested, no ground truth). Spend verification where a wrong claim is expensive,
+not uniformly.
 
 ### Step 2 - Fan Out with Codex Subagents
 
@@ -317,6 +358,19 @@ For a verifier pass, build `claims.csv` with `claim_id`, `claim`, `sources`,
 
 If the CSV tool is unavailable in the active Codex surface, split the CSV into
 normal worker or verifier slices and use the handoff format.
+
+## Generate-and-Filter and Tournaments
+
+For open-ended ideation or "produce the single best X", generate several
+candidates and filter rather than trusting one attempt:
+
+- Cheap filter first: gate candidates through a near-ground-truth check (tests,
+  `codex exec --output-schema`, schema/exec, dedup/clustering) before spending
+  judge tokens. Generation is cheap; judging is not.
+- Selection ladder, not all-pairs: dedup/cluster -> shortlist -> pairwise-judge
+  only among finalists. A naive O(N^2) tournament wastes tokens on also-rans.
+- Competing implementations: use Codex app Worktree mode or `git worktree` plus
+  one `codex exec` per attempt, then inspect/test/merge the winner.
 
 ## Parallel Writes in Codex
 

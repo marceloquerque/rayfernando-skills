@@ -119,6 +119,38 @@ size — so reserve it for high-stakes slices. The adversarial multi-model code
 review (reviewer panel → one synthesized verdict) is the same recipe — see the
 SKILL "Multi-model fan-out" section for the Cursor mechanics.
 
+## Wave shapes
+
+A wave isn't one move — pick the shape from how much you know about the problem.
+
+### Exploratory wave (you don't know the shape yet)
+When the problem space is unmapped (QA, an unfamiliar repo, "what's wrong here?"),
+send a **broad** first wave — many workers probing different surfaces/flows at
+once. Its job is to *find the edges*, not to finish. Verify what's real, and now
+you know the shape.
+
+### Shaping wave (narrow as you learn)
+After the broad wave reports, the next wave is more focused: kill the dead ends,
+double down on the areas with teeth. Each wave spends the previous wave's findings
+instead of re-guessing — the opposite of a loop re-running the same blunt prompt.
+
+### Artifact-then-bigger-wave (let a small wave earn a big one)
+Sometimes a wave's deliverable is a *document*. A small wave writes an
+architecture doc; you verify it; then a much **bigger** wave builds against it,
+many workers anchored to the same verified spec. The small wave de-risks the big
+one; the artifact keeps the big wave from poisoning itself.
+
+### Divergent research wave (fan out directions, not just chunks)
+For research, send workers in genuinely **different directions** on the same
+question, let them return independently, then run verification across them. High
+token value with no cross-contamination — separate contexts mean the directions
+don't poison each other, and the verify round turns parallel exploration into one
+trustworthy synthesis.
+
+Human-in-the-loop is optional by design: read the synthesis and shape the next
+wave yourself, or let the verifier gate it automatically. The wave boundary is
+the seam a loop doesn't give you.
+
 ## Anti-patterns
 
 - **Pointing read-only workers at remote/un-staged data.** `explore` workers are

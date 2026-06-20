@@ -111,3 +111,10 @@ Uniform handoffs are what let many isolated workers converge without talking to
 each other — the parent diffs and merges them mechanically. A sloppy, freeform
 return forces the orchestrator to re-derive structure from prose and pollutes the
 synthesis. The format is a shared commons; keep it tight.
+
+## Carrying a handoff into the next wave
+
+When one wave feeds another, pass forward only a **distilled, verified** handoff —
+the accepted findings plus a one-line critique — never raw transcripts or rejected
+candidates. Long, irrelevant context measurably degrades the next wave's
+reasoning; the synthesize barrier is where you compress.

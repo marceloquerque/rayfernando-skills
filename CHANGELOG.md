@@ -4,6 +4,41 @@ All notable changes to this collection are documented here. The format follows [
 
 ## [Unreleased]
 
+## [0.7.0] — 2026-06-20
+
+### Changed
+
+- **Renamed `parallel-orchestrate` → `waves` and `parallel-orchestrate-codex`
+  → `waves-codex`.** The method is **WAVE = Workers · Aggregate · Verify ·
+  Extend**: bounded rounds of isolated parallel subagents, a verification gate,
+  then a deliberate decision to extend into the next wave instead of looping
+  open-endedly. The old names are kept as description keywords for
+  discoverability; both plugins bump to 0.2.0.
+- **Skills are now opt-in (`disable-model-invocation: true`).** Invoke with
+  `/waves` (or `/waves-codex`) rather than auto-triggering, since a run spawns
+  more agents than usual. The release-time metadata validator now allows the
+  `disable-model-invocation` frontmatter key.
+
+### Added
+
+- **WAVE framing** in both variants, mapping Workers · Aggregate · Verify ·
+  Extend onto the existing discover → fan-out → verify → second-wave loop.
+- **Triage step (classify-and-act):** route each slice by worker type *and*
+  verification tier.
+- **Bounded-wave economics:** default width N=3–8, ≤2–3 wave cap, ~60/40
+  generate/verify budget split, a distilled-handoff anti-poisoning rule, and
+  explicit criteria for when loop-until-done is justified.
+- **Verification upgrades:** an entailment-based ≥2-source rule, reference-guided
+  + chain-of-thought verdicts, and an anti-gaming rule (the generator never sees
+  the verifier's rubric). A different-model verifier is documented as an optional
+  escalation, planned as a default in a later release.
+- **Generate-and-filter & tournaments:** a cheap-filter-before-judge gate and a
+  dedup → shortlist → pairwise selection ladder.
+- **Wave shapes** (`references/examples.md`): exploratory, shaping,
+  artifact-then-bigger-wave, and divergent-research.
+
+[0.7.0]: https://github.com/RayFernando1337/rayfernando-skills/releases/tag/v0.7.0
+
 ## [0.6.0] — 2026-06-17
 
 ### Added
