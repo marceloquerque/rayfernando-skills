@@ -4,6 +4,34 @@ All notable changes to this collection are documented here. The format follows [
 
 ## [Unreleased]
 
+## [0.7.1] — 2026-06-21
+
+### Fixed
+
+- **`waves-codex` now matches the Cursor `waves` skill's bias toward follow-ups
+  and additional waves.** The Codex port had conflated the platform recursion
+  cap (`agents.max_depth = 1`) with the willingness to spawn sequential
+  follow-up waves, so it stopped earlier and spawned fewer waves than the Cursor
+  variant. Reverted the gated phrasing ("only important" / "if needed" /
+  "materially improve") back to "each bullet is a candidate second-wave task";
+  restored the named **Continuous motion** principle and the **Step 4 — Second
+  Waves (continuous motion)** framing in `SKILL.md`; made the `examples.md` hero
+  run actually spawn Wave 2 + Wave 3 (and added a "don't stop after one wave"
+  anti-pattern); restored the panel/multi-pass cross-check and motion-first
+  escalation in `references/verification.md`; and added a "Carrying a Handoff
+  Into the Next Wave" section to `references/handoff-format.md`.
+- **Decoupled the recursion cap from sequential waves.** `agents.max_depth = 1`
+  is now documented across `SKILL.md`, `examples.md`, `recommended-config.md`,
+  and `adaptation-notes.md` as capping *recursion only* (a worker spawning its
+  own sub-workers); manager-driven second/third waves at depth 1 are encouraged
+  and unaffected. Bounded-wave caps (width 3–8, ≤2–3 waves) and the verified
+  Codex facts (`max_threads`, experimental `spawn_agents_on_csv`) are unchanged.
+- **`recommended-config.md`** now notes that `[features] multi_agent` is Stable
+  and defaults to `true` in current Codex, so setting it is optional. The
+  `waves-codex` plugin bumps to **0.2.1**.
+
+[0.7.1]: https://github.com/RayFernando1337/rayfernando-skills/releases/tag/v0.7.1
+
 ## [0.7.0] — 2026-06-20
 
 ### Changed

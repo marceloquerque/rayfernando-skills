@@ -13,6 +13,8 @@ model = "gpt-5.5"
 model_reasoning_effort = "xhigh"
 
 [features]
+# multi_agent enables the subagent collaboration tools. In current Codex it is
+# Stable and defaults to true, so this line is optional -- keep it for clarity.
 multi_agent = true
 
 [agents]
