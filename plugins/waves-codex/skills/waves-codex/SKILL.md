@@ -73,8 +73,11 @@ Read these references when using the skill:
 6. Parallel writes require disjoint ownership or isolated worktrees. Codex is
    safer than a shared local-only model when workers run in separate sandboxes or
    worktrees, but write conflicts are still a coordination problem.
-7. Keep moving until terminal. Handoffs can reveal second-wave tasks; spawn them
-   when they materially improve the final deliverable.
+7. Continuous motion (within the wave caps). Handoffs reveal new work; treat each
+   open question or suggested follow-up as a candidate second-wave task and spawn
+   it. Keep going until every slice is terminal and the synthesis is complete --
+   stopping early while genuine follow-ups remain is the failure mode this skill
+   guards against. (Stay within the depth/width caps in "Bounded Waves.")
 
 ## Bounded Waves - Size, Caps, and When to Stop
 
@@ -208,8 +211,9 @@ run; wait only when synthesis is blocked on their results. For each handoff:
 - Check `Coverage` against the assigned slice.
 - Extract `Key findings`, evidence, confidence tags, and source paths/URLs.
 - Preserve `Sources` and `Confidence & verification`.
-- Promote important `Open questions` and `Suggested follow-ups` into a second
-  wave if they are needed for the deliverable.
+- Treat each `Open questions` and `Suggested follow-ups` bullet as a candidate
+  second-wave task: accept, reject, or consolidate it. Spawning a focused
+  follow-up wave for real gaps is the normal path, not an exception.
 - Reconcile contradictions across workers before presenting claims as settled.
 
 Run cheap checks on every important finding:
@@ -243,9 +247,11 @@ available: one claim per row, fixed JSON result via `report_agent_job_result`.
 If the CSV tool is unavailable, spawn normal verifier subagents in waves under
 `agents.max_threads`.
 
-### Step 4 - Second Waves
+### Step 4 - Second Waves (continuous motion)
 
-Spawn another wave when first-wave handoffs expose:
+Multi-wave is the normal shape, not an exception: a realistic run is often
+`12 + 3 + 1` workers across three waves rather than one giant burst. Spawn
+another wave whenever first-wave handoffs expose:
 
 - Missing coverage.
 - Conflicting findings.
@@ -254,13 +260,15 @@ Spawn another wave when first-wave handoffs expose:
 - A bounded implementation task after research converged.
 - A new user request that narrows or redirects the scope.
 
-Multi-wave is normal. A realistic run may be `12 + 3 + 1` workers across three
-waves rather than one giant burst.
+Repeat until no slice is pending and nothing new surfaces (within the
+"Bounded Waves" depth/width caps).
 
-Do not recurse by default. Current docs say `agents.max_depth` defaults to `1`,
-which allows direct child agents but prevents deeper nesting. If a recursive
-subplanner is truly needed, raise `agents.max_depth` deliberately and tightly
-scope that behavior.
+Sequential second and third waves are spawned by the manager at depth 1 and are
+encouraged -- they are NOT what `max_depth` limits. `agents.max_depth` (default
+`1`) governs *recursion* only: a worker spawning its own sub-workers. Keep
+recursion off by default and raise `agents.max_depth` deliberately and tightly
+only if a recursive subplanner is truly needed; manager-driven waves need no
+such change.
 
 ### Step 5 - Deliver One Synthesized Artifact
 

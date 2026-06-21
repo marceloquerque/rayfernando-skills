@@ -93,3 +93,9 @@ gotchas:
 - Parallel implementation is allowed only with clear ownership or worktrees.
 - The default config keeps `max_depth = 1` to prevent accidental recursive
   explosion.
+- `max_depth = 1` caps *recursion only* (a worker spawning its own workers). It
+  does not cap manager-driven sequential waves: continuous motion across second
+  and third waves at depth 1 is preserved from the Cursor skill and is the
+  expected shape. Do not let the recursion cap leak into "spawn fewer waves" --
+  the gated "only important / if needed" phrasing was deliberately reverted to
+  Cursor's "each bullet is a candidate second-wave task."

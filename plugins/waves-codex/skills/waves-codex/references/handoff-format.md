@@ -37,7 +37,7 @@ success | partial | blocked
 - Would change my conclusion: <missing evidence or falsifier>
 
 ## Open questions / gaps
-- <anything ambiguous, missing, contradictory, or out of scope>
+- <anything ambiguous, missing, contradictory, or out of scope that the manager should resolve, often by spawning a follow-up task>
 
 ## Suggested follow-ups
 - <concrete next tasks the orchestrator should consider spawning>
@@ -149,11 +149,22 @@ Verifier CSV rows should return JSON with:
 4. `Sources / Confidence & verification`: preserve them so later waves and the
    final deliverable can trace evidence. Route low-confidence, single-sourced,
    contested, or unresolved citations to a verifier.
-5. `Open questions / Suggested follow-ups`: convert only high-value gaps into
-   second-wave tasks.
+5. `Open questions / Suggested follow-ups`: the richest section -- treat each
+   bullet as a candidate second-wave task and accept, reject, or consolidate it.
+   Spawning a focused follow-up wave for real gaps is the normal path, not an
+   exception.
 
 ## Why a Fixed Shape
 
 Uniform handoffs let many isolated workers converge without cross-talk. The
 manager can merge evidence mechanically instead of re-deriving structure from
 freeform prose.
+
+## Carrying a Handoff Into the Next Wave
+
+When one wave feeds another, pass forward only a distilled, verified handoff --
+the accepted findings plus a one-line critique -- never raw transcripts or
+rejected candidates. Long, irrelevant context measurably degrades the next
+wave's reasoning; the synthesize barrier is where you compress. Multi-wave is
+the normal shape, not an exception: a realistic run is often `12 + 3 + 1`
+workers across waves, each wave spending the previous wave's verified findings.

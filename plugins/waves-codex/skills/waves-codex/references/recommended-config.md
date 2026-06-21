@@ -20,6 +20,8 @@ multi_agent = true
 max_threads = 6
 
 # Current default is 1: root can spawn direct children, children cannot recurse.
+# This caps recursion only; manager-driven second/third waves at depth 1 are
+# unaffected and encouraged (see SKILL "Step 4 - Second Waves").
 max_depth = 1
 
 # Default per-worker timeout for spawn_agents_on_csv jobs.

@@ -85,18 +85,20 @@ Do not: compare all roadmap options or write implementation code.
 Return exactly the research/analysis handoff format.
 ```
 
-### Step 3 - Collect, Verify, and Synthesize
+### Step 3-5 - Collect, Verify, Spawn Next Waves, Deliver
 
-- Read all handoffs.
-- Check coverage against assigned slices.
-- Spot-check citations and source paths.
-- Recount headline numbers from the source data.
+- Read all handoffs; check coverage against assigned slices; spot-check citations
+  and source paths; recount headline numbers from the source data.
 - Send contested, high-stakes, or citation-heavy claims to a verifier worker.
-- Merge recurring themes across message chunks.
-- Separate evidence-backed patterns from one-off observations.
-- Reconcile stack research conflicts with source quality and date.
-- Promote only important gaps into a second wave.
-- Write the roadmap yourself from the merged evidence.
+- Merge recurring themes across message chunks; separate evidence-backed patterns
+  from one-off observations; reconcile stack-research conflicts by source quality
+  and date.
+- Spawn the next wave from what the handoffs surfaced -- treat each
+  `Suggested follow-ups` bullet as a candidate task. Here that is Wave 2 (3
+  Convex deep-dives once the user narrowed scope) and then Wave 3 (1 iOS-MVP
+  worker once synthesis exposed a concrete slice). Planning for a second and
+  third wave is the default, not the exception.
+- Synthesize the roadmap yourself from the merged, verified handoffs.
 
 ## Recipe: Data-Chunk Fan-Out
 
@@ -109,7 +111,8 @@ analytics rows.
 4. Spawn one `explorer` per chunk, or use `spawn_agents_on_csv` when one row maps
    cleanly to one worker.
 5. Require coverage and evidence identifiers in every finding.
-6. Merge into themes, counts, outliers, and follow-ups.
+6. Merge into themes, counts, outliers, and follow-ups; spawn a focused second
+   wave for the follow-ups that change the deliverable.
 
 CSV-shaped prompt:
 
@@ -234,8 +237,12 @@ wave yourself, or let the verifier gate it automatically.
 - Embed giant verbatim artifacts in a handoff. Write large artifacts to disk and
   cite the path instead.
 - Skip re-reading critical files you wrote.
-- Treat `agents.max_depth > 1` as a default. Recursive fan-out is expensive and
-  can get unpredictable.
+- Stop after one wave when handoffs surfaced real, deliverable-changing
+  follow-ups. Multi-wave (`12 + 3 + 1`) is the expected shape, not one burst.
+- Treat `agents.max_depth > 1` as a default. Recursive fan-out (workers spawning
+  their own workers) is expensive and unpredictable -- but this caps recursion
+  only; the manager launching sequential second and third waves at depth 1 is
+  encouraged, not capped.
 - Assume parallel writes automatically merge. Use disjoint ownership or
   worktrees.
 - Forward raw handoffs as the final answer.

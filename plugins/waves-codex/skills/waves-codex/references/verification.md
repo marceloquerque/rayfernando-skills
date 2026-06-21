@@ -52,7 +52,8 @@ Every handoff gets a fast manager-side pass:
 - The worker carried confidence tags and unresolved gaps.
 
 Accept only findings that are evidence-backed, scope-correct, and not
-contradicted. Demote, re-task, or verify the rest.
+contradicted. Re-task or verify the rest (often a quick follow-up wave); demote
+only when re-checking isn't worth it.
 
 ## 3. Push Self-Checks Into Worker Prompts
 
@@ -126,6 +127,10 @@ Prefer direct oracles over prose review:
   as verified - check entailment, don't just count citations (a citation being
   present is not the claim being supported).
 - Split long claims into atomic facts and verify each separately.
+- Panel / multi-pass cross-check: for a high-stakes or contested claim, run it
+  across several independent passes (or different models, if the user approves)
+  and synthesize consensus vs lone-result. That extra spawning is worth it for
+  claims the deliverable hinges on.
 
 For docs/current behavior, use primary sources first. For Codex/OpenAI details,
 prefer `developers.openai.com/codex` and current local CLI/tool behavior.
@@ -155,7 +160,8 @@ Escalation order:
 1. Re-task narrower.
 2. Spawn a verifier.
 3. Use a higher-reasoning verifier.
-4. Ask the user or mark the limitation explicitly.
+4. Ask the user (who may pick a stronger model). Mark the limitation explicitly
+   only as a last resort, after re-tasking and verifier passes are exhausted.
 
 Never launder low confidence into confident prose. Final claims should be marked
 `verified`, `single-sourced`, or `unverified` when the distinction matters.
